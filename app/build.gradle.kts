@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.miti"
+    namespace = "com.putrinadya.miti"
     compileSdk {
         version = release(36)
     }
