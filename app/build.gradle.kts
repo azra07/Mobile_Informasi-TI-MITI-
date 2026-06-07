@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.example.miti" // Diubah dari "com.putrinadya.miti" menjadi "com.example.miti"
+    namespace = "com.putrinadya.miti" // Diubah dari "com.putrinadya.miti" menjadi "com.example.miti"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.example.miti"
+        applicationId = "com.putrinadya.miti"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -41,6 +42,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(platform("com.google.firebase:firebase-bom:34.14.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
