@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.putrinadya.miti" // Diubah dari "com.putrinadya.miti" menjadi "com.example.miti"
+    namespace = "com.putrinadya.miti"
     compileSdk {
         version = release(36)
     }
@@ -51,6 +51,12 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+
+    // Library Navigasi & Lifecycle ViewModel yang baru ditambahkan:
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+    implementation("androidx.compose.material:material-icons-extended:1.6.8")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
