@@ -16,14 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.putrinadya.miti.presentation.screens.student.dashboard.StudentDashboardViewModel
-import com.putrinadya.miti.presentation.screens.student.dashboard.ProfileDetailRow
-import com.putrinadya.miti.presentation.screens.student.dashboard.RegisteredActivityCard
 
 @Composable
 fun ProfileStudent(viewModel: StudentDashboardViewModel) {

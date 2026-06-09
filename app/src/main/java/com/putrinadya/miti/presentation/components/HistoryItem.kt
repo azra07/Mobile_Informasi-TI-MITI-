@@ -53,7 +53,7 @@ fun HistoryItem(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Completed on ${event.dateMonth} ${event.dateDay}",
+                        text = "Completed on ${event.dayMonth} ${event.year}",
                         fontSize = 11.sp,
                         color = Color.Gray
                     )

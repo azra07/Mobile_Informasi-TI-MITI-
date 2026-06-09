@@ -2,12 +2,12 @@
 <resources>
     <string name="app_name">MITI</string>
 
-    <string name="onboard_title_1">Informasi Terpusat</string>
-    <string name="onboard_desc_1">Temukan informasi seminar, lomba, dan kegiatan Prodi TI tanpa takut tertinggal jarkoman.</string>
-    <string name="onboard_title_2">Daftar Lebih Mudah</string>
-    <string name="onboard_desc_2">Ikuti kegiatan yang kamu minati hanya dengan satu klik langsung dari dalam aplikasi.</string>
-    <string name="onboard_title_3">Pantau Portofolio</string>
-    <string name="onboard_desc_3">Riwayat keaktifanmu akan tercatat otomatis di profil sebagai portofolio digital.</string>
+    <string name="onboarding_title_1">Informasi Terpusat</string>
+    <string name="onboarding_desc_1">Temukan informasi seminar, lomba, dan kegiatan Prodi TI tanpa takut tertinggal jarkoman.</string>
+    <string name="onboarding_title_2">Daftar Lebih Mudah</string>
+    <string name="onboarding_desc_2">Ikuti kegiatan yang kamu minati hanya dengan satu klik langsung dari dalam aplikasi.</string>
+    <string name="onboarding_title_3">Pantau Portofolio</string>
+    <string name="onboarding_desc_3">Riwayat keaktifanmu akan tercatat otomatis di profil sebagai portofolio digital.</string>
     <string name="btn_next">Lanjut</string>
     <string name="btn_skip">Lewati</string>
     <string name="btn_start">Mulai Sekarang</string>

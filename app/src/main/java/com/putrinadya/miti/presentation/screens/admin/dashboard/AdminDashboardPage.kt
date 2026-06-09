@@ -197,7 +197,7 @@ fun AdminEventCard(event: Event) {
                     }
                     Spacer(modifier = Modifier.height(6.dp))
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🕒 ${event.dateMonth} ${event.dateDay} at ${event.time}", fontSize = 11.sp, color = Color.Gray)
+                        Text("🕒 ${event.dayMonth} ${event.year} at ${event.time}", fontSize = 11.sp, color = Color.Gray)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("📍 ${event.location}", fontSize = 11.sp, color = Color.Gray, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
@@ -405,11 +405,22 @@ fun CreateNewEventDialog(
 
                 Button(
                     onClick = {
+                        val dateParts = dateString.split("/")
+
+                        val monthNum = dateParts.getOrNull(0) ?: "01" // Ambil "04"
+                        val dayNum = dateParts.getOrNull(1) ?: "01"   // Ambil "15"
+                        val yearStr = dateParts.getOrNull(2) ?: "2026" // Ambil "2026"
+
+                        val monthNames = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+                        val monthIndex = monthNum.toIntOrNull()?.minus(1)?.coerceIn(0, 11) ?: 0
+                        val monthShort = monthNames[monthIndex]
+
                         val newEvent = Event(
                             title = eventTitle,
                             category = eventType,
-                            dateMonth = "Apr",
-                            dateDay = "30",
+                            dayMonth = monthShort,
+                            year = yearStr,
+                            fullDate = "$monthShort $dayNum, $yearStr",
                             time = timeString,
                             location = location,
                             currentParticipants = 0,

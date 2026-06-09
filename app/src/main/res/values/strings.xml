@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">MITI</string>
 
-    <string name="onboard_title_1">Centralized Information</string>
-    <string name="onboard_desc_1">Find information on seminars, competitions, and IT Prodi activities without missing broadcasts.</string>
-    <string name="onboard_title_2">Register Easily</string>
-    <string name="onboard_desc_2">Join the activities you are interested in with just one click directly from the app.</string>
-    <string name="onboard_title_3">Monitor Portfolio</string>
-    <string name="onboard_desc_3">Your activity history will be recorded automatically in your profile as a digital portfolio.</string>
+    <string name="onboarding_title_1">Centralized Information</string>
+    <string name="onboarding_desc_1">Find information on seminars, competitions, and IT Prodi activities without missing broadcasts.</string>
+    <string name="onboarding_title_2">Register Easily</string>
+    <string name="onboarding_desc_2">Join the activities you are interested in with just one click directly from the app.</string>
+    <string name="onboarding_title_3">Monitor Portfolio</string>
+    <string name="onboarding_desc_3">Your activity history will be recorded automatically in your profile as a digital portfolio.</string>
     <string name="btn_next">Next</string>
     <string name="btn_skip">Skip</string>
     <string name="btn_start">Get Started</string>

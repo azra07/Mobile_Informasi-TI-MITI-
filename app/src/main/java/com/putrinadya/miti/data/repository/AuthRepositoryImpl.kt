@@ -8,7 +8,9 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
@@ -40,7 +42,8 @@ class AuthRepositoryImpl @Inject constructor(
         name: String,
         email: String,
         password: String,
-        role: String
+        role: String,
+        nim: String
     ): Flow<Result<Unit>> = callbackFlow {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
