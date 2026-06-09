@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MITI</string>
+
+    <string name="onboard_title_1">Informasi Terpusat</string>
+    <string name="onboard_desc_1">Temukan informasi seminar, lomba, dan kegiatan Prodi TI tanpa takut tertinggal jarkoman.</string>
+    <string name="onboard_title_2">Daftar Lebih Mudah</string>
+    <string name="onboard_desc_2">Ikuti kegiatan yang kamu minati hanya dengan satu klik langsung dari dalam aplikasi.</string>
+    <string name="onboard_title_3">Pantau Portofolio</string>
+    <string name="onboard_desc_3">Riwayat keaktifanmu akan tercatat otomatis di profil sebagai portofolio digital.</string>
+    <string name="btn_next">Lanjut</string>
+    <string name="btn_skip">Lewati</string>
+    <string name="btn_start">Mulai Sekarang</string>
+
+    <string name="login_welcome">Selamat Datang Kembali</string>
+    <string name="login_subtitle">Kelola kegiatan teknologi universitasmu</string>
+    <string name="password_label">Kata Sandi</string>
+    <string name="dont_have_account">Belum punya akun? Daftar</string>
+    <string name="role_student">Mahasiswa</string>
+    <string name="role_admin">Admin / Dosen</string>
+    <string name="login_title">Masuk ke Akun</string>
+    <string name="login_as_student">Masuk sebagai Mahasiswa</string><string name="login_as_admin">Masuk sebagai Admin</string>
+    <string name="create_account">Buat Akun</string>
+    <string name="register_title">Daftar Akun</string>
+    <string name="register_subtitle">Gabung ke komunitas IT Activity Hub</string>
+    <string name="full_name">Nama Lengkap</string>
+    <string name="email_label">Alamat Email</string>
+    <string name="nim_label">NIM (ID Mahasiswa)</string>
+    <string name="register_as">Daftar Sebagai</string>
+    <string name="btn_create_account">Daftar Sekarang</string>
+    <string name="error_empty_fields">Tolong isi semua kolom</string>
+
+    <string name="no_title">Tanpa Judul</string>
+    <string name="no_location">Lokasi Belum Ditentukan</string>
+    <string name="general_category">Umum</string>
+</resources>

@@ -2,10 +2,22 @@ package com.putrinadya.miti.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// Warna Utama Tema MITI (Dark Mode)
+val MitiNavy = Color(0xFF030A16)
+val MitiCyan = Color(0xFF00E5FF)
+val MitiCard = Color(0xFF091522)
+val MitiPrimary = Color(0xFF00E5FF)
+val MitiSecondary = Color(0xFF0F3D8C)
+val MitiAccent = Color(0xFF13B5B1)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Warna Teks & Status
+val MitiWhite = Color(0xFFFFFFFF)
+val MitiGray = Color(0xFF9E9E9E)
+
+// Warna Kategori
+val MitiWorkshop = Color(0xFFC583FF)   // Ungu
+val MitiHackathon = Color(0xFF00E676)  // Hijau
+val MitiSeminar = Color(0xFF00B0FF)    // Biru Muda
+val MitiWebinar = Color(0xFF2979FF)    // Biru Tua
+val MitiCompetition = Color(0xFFFFD600)// Kuning
+val MitiFunMatch = Color(0xFFFF8A80)   // Merah muda/Pink

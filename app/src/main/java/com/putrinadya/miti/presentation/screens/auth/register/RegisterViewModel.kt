@@ -4,8 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.putrinadya.miti.domain.usecase.auth.RegisterUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RegisterViewModel : ViewModel() {
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val registerUseCase: RegisterUseCase
+) : ViewModel() {
     var uiState by mutableStateOf(RegisterUiState())
         private set
 
@@ -25,6 +33,10 @@ class RegisterViewModel : ViewModel() {
         uiState = uiState.copy(password = newValue, error = null)
     }
 
+    fun onRoleChanged(newRole: String) {
+        uiState = uiState.copy(role = newRole)
+    }
+
     fun register() {
         if (uiState.name.isBlank() || uiState.email.isBlank() || uiState.nim.isBlank() || uiState.password.isBlank()) {
             uiState = uiState.copy(error = "Please fill in all fields")
@@ -33,11 +45,27 @@ class RegisterViewModel : ViewModel() {
 
         uiState = uiState.copy(isLoading = true, error = null)
 
-        // Simulasi registrasi sukses
-        uiState = uiState.copy(
-            isLoading = false,
-            isSuccess = true
-        )
+        viewModelScope.launch {
+             registerUseCase(
+                    name = uiState.name,
+                    email = uiState.email,
+                    password = uiState.password,
+                    role = uiState.role,
+                    nim = uiState.nim
+             ).collect { result ->
+                 uiState = if (result.isSuccess) {
+                     uiState.copy(
+                         isLoading = false,
+                         isSuccess = true
+                     )
+                 } else {
+                     uiState.copy(
+                         isLoading = false,
+                         error = result.exceptionOrNull()?.message ?: "An unexpected error occurred"
+                     )
+                 }
+             }
+        }
     }
 
     fun resetSuccessState() {

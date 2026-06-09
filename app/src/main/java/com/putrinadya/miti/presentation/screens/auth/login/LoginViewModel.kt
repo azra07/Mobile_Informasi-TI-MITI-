@@ -4,8 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.putrinadya.miti.domain.usecase.auth.LoginUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase
+) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState())
         private set
 
@@ -19,18 +27,37 @@ class LoginViewModel : ViewModel() {
 
     fun login(role: String) {
         if (uiState.emailOrNim.isBlank() || uiState.password.isBlank()) {
-            uiState = uiState.copy(error = "Please fill in all fields")
+            uiState = uiState.copy(error = "Mohon Isi Semua Kolom")
             return
         }
 
         uiState = uiState.copy(isLoading = true, error = null)
 
         // Simulasi login sukses berdasarkan role yang dipilih
-        uiState = uiState.copy(
-            isLoading = false,
-            isSuccess = true,
-            userRole = role
-        )
+        viewModelScope.launch {
+            loginUseCase(uiState.emailOrNim, uiState.password).collect { result ->
+                result.onSuccess { user ->
+                    if (user.role == role) {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            isSuccess = true,
+                            userRole = user.role
+                        )
+                    } else {
+                        uiState = uiState.copy(
+                            isLoading = false,
+                            error = "Akses ditolak. Anda buka $role"
+                        )
+                    }
+                }
+                result.onFailure { exception ->
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        error = exception.message ?: "Login gagal. Periksa kembali email atau password Anda."
+                    )
+                }
+            }
+        }
     }
 
     fun resetSuccessState() {

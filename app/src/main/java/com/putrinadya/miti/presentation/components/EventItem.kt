@@ -10,12 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.putrinadya.miti.domain.model.Event
+import com.putrinadya.miti.R
+import com.putrinadya.miti.ui.theme.*
 
 @Composable
 fun EventItem(
@@ -27,14 +29,13 @@ fun EventItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF091522)),
+        colors = CardDefaults.cardColors(containerColor = MitiCard),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Garis vertikal warna kategori di sisi kiri
             Box(
                 modifier = Modifier
                     .width(4.dp)
@@ -46,26 +47,28 @@ fun EventItem(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = event.title,
+                    text = if (event.title.isEmpty()) stringResource(R.string.no_title) else event.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = MitiWhite,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
+
                 Spacer(modifier = Modifier.height(4.dp))
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = event.category,
+                        text = if (event.category.isEmpty()) stringResource(R.string.general_category) else event.category,
                         fontSize = 11.sp,
                         color = event.categoryColor,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(" • ", fontSize = 11.sp, color = Color.Gray)
+                    Text(" • ", fontSize = 11.sp, color = MitiGray)
                     Text(
-                        text = "${event.dateMonth} ${event.dateDay}",
+                        text = "${event.dayMonth} ${event.year}",
                         fontSize = 11.sp,
-                        color = Color.Gray
+                        color = MitiGray
                     )
                 }
             }

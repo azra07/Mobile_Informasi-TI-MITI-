@@ -1,3 +1,36 @@
 <resources>
     <string name="app_name">MITI</string>
+
+    <string name="onboard_title_1">Centralized Information</string>
+    <string name="onboard_desc_1">Find information on seminars, competitions, and IT Prodi activities without missing broadcasts.</string>
+    <string name="onboard_title_2">Register Easily</string>
+    <string name="onboard_desc_2">Join the activities you are interested in with just one click directly from the app.</string>
+    <string name="onboard_title_3">Monitor Portfolio</string>
+    <string name="onboard_desc_3">Your activity history will be recorded automatically in your profile as a digital portfolio.</string>
+    <string name="btn_next">Next</string>
+    <string name="btn_skip">Skip</string>
+    <string name="btn_start">Get Started</string>
+
+    <string name="login_welcome">Welcome Back</string>
+    <string name="login_subtitle">Manage your university tech events</string>
+    <string name="dont_have_account">Don\'t have an account? Register</string>
+    <string name="role_student">Student College</string>
+    <string name="role_admin">Admin / Lecturer</string>
+    <string name="login_title">Login to Account</string>
+    <string name="login_as_student">Login as Student</string>
+    <string name="login_as_admin">Login as Admin</string>
+    <string name="create_account">Create Account</string>
+    <string name="register_title">Register Account</string>
+    <string name="register_subtitle">Join the IT Activity Hub community</string>
+    <string name="full_name">Full Name</string>
+    <string name="email_label">Email Address</string>
+    <string name="nim_label">NIM (Student ID)</string>
+    <string name="password_label">Password</string>
+    <string name="register_as">Register As</string>
+    <string name="btn_create_account">Create Account</string>
+    <string name="error_empty_fields">Please fill in all fields</string>
+
+    <string name="no_title">No Title</string>
+    <string name="no_location">Location Not Determined</string>
+    <string name="general_category">General</string>
 </resources>
