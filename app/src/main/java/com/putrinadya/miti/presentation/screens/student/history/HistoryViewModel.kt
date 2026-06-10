@@ -4,9 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.putrinadya.miti.utils.DummyData
+import com.putrinadya.miti.domain.usecase.history.GetActivityHistoryUseCase
 
-class HistoryViewModel : ViewModel() {
+class HistoryViewModel(
+    private val getActivityHistoryUseCase: GetActivityHistoryUseCase = GetActivityHistoryUseCase()
+) : ViewModel() {
     var uiState by mutableStateOf(HistoryUiState())
         private set
 
@@ -15,9 +17,10 @@ class HistoryViewModel : ViewModel() {
     }
 
     private fun loadHistory() {
-        // Simulasi memuat riwayat kegiatan mahasiswa (mengambil 3 event pertama dari DummyData)
+        uiState = uiState.copy(isLoading = true)
+        val historyList = getActivityHistoryUseCase.execute()
         uiState = uiState.copy(
-            pastEvents = DummyData.dummyEvents.take(3),
+            pastEvents = historyList,
             isLoading = false
         )
     }

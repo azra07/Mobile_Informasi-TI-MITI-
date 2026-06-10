@@ -6,9 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.utils.DummyData // Mengimpor data bersama yang sudah aman
+import com.putrinadya.miti.domain.usecase.event.GetEventsUseCase
+import com.putrinadya.miti.domain.usecase.event.RegisterToEventUseCase
 
-class StudentDashboardViewModel : ViewModel() {
+class StudentDashboardViewModel(
+    private val getEventsUseCase: GetEventsUseCase = GetEventsUseCase(),
+    private val registerToEventUseCase: RegisterToEventUseCase = RegisterToEventUseCase()
+) : ViewModel() {
     var searchQuery by mutableStateOf("")
         private set
 
@@ -18,13 +22,11 @@ class StudentDashboardViewModel : ViewModel() {
     var selectedEventForRegistration by mutableStateOf<Event?>(null)
         private set
 
-    // Daftar kegiatan terdaftar yang bersifat dinamis & real-time
     val registeredEvents = mutableStateListOf<Event>()
 
-    // Memanggil langsung dari DummyData (Sangat ringkas dan 100% aman dari eror parameter!)
-    val allEvents = DummyData.dummyEvents
+    // Mengambil data melalui Use Case sesuai Clean Architecture
+    val allEvents = getEventsUseCase.execute()
 
-    // Logika pencarian event secara aktif
     val filteredEvents: List<Event>
         get() = if (searchQuery.isEmpty()) {
             allEvents
@@ -48,9 +50,7 @@ class StudentDashboardViewModel : ViewModel() {
     }
 
     fun registerForEvent(event: Event) {
-        if (!registeredEvents.any { it.title == event.title }) {
-            registeredEvents.add(event)
-        }
+        registerToEventUseCase.execute(event, registeredEvents)
     }
 
     fun unregisterForEvent(event: Event) {

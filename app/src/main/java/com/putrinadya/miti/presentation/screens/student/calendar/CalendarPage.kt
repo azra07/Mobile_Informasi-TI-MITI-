@@ -1,6 +1,7 @@
 package com.putrinadya.miti.presentation.screens.student.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -17,26 +18,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.putrinadya.miti.presentation.screens.student.dashboard.StudentDashboardViewModel
+import com.putrinadya.miti.ui.theme.* // Mengimpor tema warna kustom Anda
 
 @Composable
-fun CalendarPage(viewModel: StudentDashboardViewModel) {
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
+fun CalendarPage(
+    viewModel: StudentDashboardViewModel, // Berbagi instance ViewModel dengan Dashboard agar sinkron
+    calendarViewModel: CalendarViewModel = viewModel()
+) {
+    val uiState = calendarViewModel.uiState
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MitiNavy) // Menggunakan MitiNavy kustom Anda
             .padding(16.dp)
     ) {
         Text(
             text = "Calendar",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = textWhite,
+            color = MitiWhite, // Menggunakan MitiWhite
             modifier = Modifier.padding(bottom = 24.dp)
         )
 
@@ -45,16 +48,16 @@ fun CalendarPage(viewModel: StudentDashboardViewModel) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("<", fontSize = 20.sp, color = textWhite, fontWeight = FontWeight.Bold)
-            Text("April 2026", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textWhite)
-            Text(">", fontSize = 20.sp, color = textWhite, fontWeight = FontWeight.Bold)
+            Text("<", fontSize = 20.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
+            Text(uiState.currentMonth, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+            Text(">", fontSize = 20.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = cardColor),
+            colors = CardDefaults.cardColors(containerColor = MitiCard), // Menggunakan MitiCard kustom Anda
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
@@ -65,7 +68,7 @@ fun CalendarPage(viewModel: StudentDashboardViewModel) {
                             text = day,
                             modifier = Modifier.weight(1f),
                             textAlign = TextAlign.Center,
-                            color = Color.Gray,
+                            color = MitiGray, // Menggunakan MitiGray
                             fontSize = 12.sp
                         )
                     }
@@ -88,17 +91,13 @@ fun CalendarPage(viewModel: StudentDashboardViewModel) {
                             Box(modifier = Modifier.size(36.dp))
                         } else {
                             val dayNumber = index - emptySlotsBefore + 1
-                            val isToday = dayNumber == 10
+                            val isSelected = dayNumber == uiState.selectedDay
 
-                            val eventColor = when (dayNumber) {
-                                15 -> Color(0xFFC583FF) // Workshop Purple
-                                18 -> Color(0xFF00B0FF) // Seminar Blue
-                                20 -> Color(0xFF00E676) // Hackathon Green
-                                22 -> Color(0xFF2979FF) // Webinar Dark Blue
-                                25 -> Color(0xFFFFD600) // Competition Yellow
-                                28 -> Color(0xFFC583FF) // Workshop Purple
-                                else -> null
+                            // MENCARI TITIK EVENT SECARA DINAMIS DARI USE CASE
+                            val dayEvent = uiState.events.find {
+                                it.year.toIntOrNull() == dayNumber && it.dayMonth == "Apr"
                             }
+                            val eventColor = dayEvent?.categoryColor
 
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,19 +107,21 @@ fun CalendarPage(viewModel: StudentDashboardViewModel) {
                                     modifier = Modifier
                                         .size(34.dp)
                                         .background(
-                                            color = if (isToday) primaryCyan.copy(alpha = 0.2f) else Color.Transparent,
+                                            color = if (isSelected) MitiCyan.copy(alpha = 0.2f) else Color.Transparent,
                                             shape = CircleShape
-                                        ),
+                                        )
+                                        .clickable { calendarViewModel.onDaySelected(dayNumber) },
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
                                         text = dayNumber.toString(),
-                                        color = if (isToday) primaryCyan else textWhite,
-                                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                                        color = if (isSelected) MitiCyan else MitiWhite,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                                         fontSize = 14.sp
                                     )
                                 }
 
+                                // Menggambar titik warna kategori event secara dinamis
                                 if (eventColor != null) {
                                     Spacer(modifier = Modifier.height(3.dp))
                                     Box(

@@ -8,26 +8,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.putrinadya.miti.presentation.components.HistoryItem
 import com.putrinadya.miti.presentation.components.TopBar
+import com.putrinadya.miti.ui.theme.*
 
 @Composable
 fun HistoryPage(
     viewModel: HistoryViewModel = viewModel()
 ) {
     val uiState = viewModel.uiState
-    val backgroundColor = Color(0xFF030A16)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MitiNavy)
     ) {
-        // Memanggil TopBar global yang baru Anda buat
         TopBar(title = "Activity History")
 
         if (uiState.pastEvents.isEmpty()) {
@@ -37,7 +35,7 @@ fun HistoryPage(
             ) {
                 Text(
                     text = "No past activities found.",
-                    color = Color.Gray,
+                    color = MitiGray,
                     fontSize = 14.sp
                 )
             }
@@ -52,7 +50,6 @@ fun HistoryPage(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
                 items(uiState.pastEvents) { event ->
-                    // Memanggil HistoryItem global yang baru Anda buat
                     HistoryItem(event = event)
                 }
             }

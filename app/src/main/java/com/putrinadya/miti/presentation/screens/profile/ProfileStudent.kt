@@ -16,11 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.putrinadya.miti.presentation.screens.student.dashboard.StudentDashboardViewModel
+import com.putrinadya.miti.ui.theme.* // Mengimpor tema warna Miti baru Anda
 
 @Composable
 fun ProfileStudent(viewModel: StudentDashboardViewModel) {
@@ -31,15 +33,10 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
     var showEditDialog by remember { mutableStateOf(false) }
     var isDarkMode by remember { mutableStateOf(true) }
 
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MitiNavy)
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -48,7 +45,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                 text = "Profile",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = textWhite,
+                color = MitiWhite,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
         }
@@ -56,7 +53,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = cardColor),
+                colors = CardDefaults.cardColors(containerColor = MitiCard),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -64,7 +61,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(80.dp)
-                            .background(primaryCyan)
+                            .background(MitiCyan)
                     )
 
                     Box(
@@ -77,10 +74,10 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                                 .offset(y = (-40).dp)
                                 .size(80.dp)
                                 .background(Color(0xFF00B0FF), CircleShape)
-                                .border(4.dp, cardColor, CircleShape),
+                                .border(4.dp, MitiCard, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("AJ", fontWeight = FontWeight.Bold, color = backgroundColor, fontSize = 24.sp)
+                            Text("AJ", fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 24.sp)
                         }
 
                         OutlinedButton(
@@ -89,9 +86,9 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                                 .align(Alignment.TopEnd)
                                 .padding(top = 8.dp),
                             shape = RoundedCornerShape(20.dp),
-                            colors = ButtonDefaults.outlinedButtonColors(contentColor = primaryCyan),
+                            colors = ButtonDefaults.outlinedButtonColors(contentColor = MitiCyan),
                             border = ButtonDefaults.outlinedButtonBorder.copy(
-                                brush = androidx.compose.ui.graphics.SolidColor(primaryCyan)
+                                brush = androidx.compose.ui.graphics.SolidColor(MitiCyan)
                             )
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -107,7 +104,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                             .fillMaxWidth()
                             .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
                     ) {
-                        Text(studentName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = textWhite)
+                        Text(studentName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                         Spacer(modifier = Modifier.height(12.dp))
 
                         ProfileDetailRow(icon = "👤", label = "NIM (Student ID): $studentNim")
@@ -119,10 +116,11 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
             }
         }
 
+        // TOTAL AKTIVITAS DINAMIS DARI VIEWMODEL NYATA
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = cardColor),
+                colors = CardDefaults.cardColors(containerColor = MitiCard),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Row(
@@ -142,17 +140,18 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                             Text("📅", fontSize = 16.sp)
                         }
                         Spacer(modifier = Modifier.width(12.dp))
-                        Text("Total Activities Joined:", fontSize = 14.sp, color = textWhite, fontWeight = FontWeight.Bold)
+                        Text("Total Activities Joined:", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
                     }
-                    Text(viewModel.registeredEvents.size.toString(), fontSize = 28.sp, fontWeight = FontWeight.Bold, color = primaryCyan)
+                    Text(viewModel.registeredEvents.size.toString(), fontSize = 28.sp, fontWeight = FontWeight.Bold, color = MitiCyan)
                 }
             }
         }
 
         item {
-            Text("Registered Activities", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textWhite)
+            Text("Registered Activities", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
         }
 
+        // DAFTAR KEGIATAN TERDAFTAR DINAMIS DARI VIEWMODEL NYATA
         if (viewModel.registeredEvents.isEmpty()) {
             item {
                 Box(
@@ -161,7 +160,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                         .padding(vertical = 24.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("No registered activities yet.", color = Color.Gray, fontSize = 14.sp)
+                    Text("No registered activities yet.", color = MitiGray, fontSize = 14.sp)
                 }
             }
         } else {
@@ -173,7 +172,7 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = cardColor),
+                colors = CardDefaults.cardColors(containerColor = MitiCard),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
@@ -188,16 +187,16 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                             Text("🌙", fontSize = 18.sp)
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Dark Mode", fontSize = 14.sp, color = textWhite, fontWeight = FontWeight.Bold)
-                                Text(if (isDarkMode) "On" else "Off", fontSize = 11.sp, color = Color.Gray)
+                                Text("Dark Mode", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
+                                Text(if (isDarkMode) "On" else "Off", fontSize = 11.sp, color = MitiGray)
                             }
                         }
                         Switch(
                             checked = isDarkMode,
                             onCheckedChange = { isDarkMode = it },
                             colors = SwitchDefaults.colors(
-                                checkedThumbColor = backgroundColor,
-                                checkedTrackColor = primaryCyan
+                                checkedThumbColor = MitiNavy,
+                                checkedTrackColor = MitiCyan
                             )
                         )
                     }
@@ -215,11 +214,11 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
                             Text("🌐", fontSize = 18.sp)
                             Spacer(modifier = Modifier.width(12.dp))
                             Column {
-                                Text("Language", fontSize = 14.sp, color = textWhite, fontWeight = FontWeight.Bold)
-                                Text("English", fontSize = 11.sp, color = Color.Gray)
+                                Text("Language", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
+                                Text("English", fontSize = 11.sp, color = MitiGray)
                             }
                         }
-                        Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Go", tint = Color.Gray)
+                        Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Go", tint = MitiGray)
                     }
                 }
             }
@@ -263,7 +262,20 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
     }
 }
 
-// ================= DIALOG: POP-UP EDIT PROFILE MAHASISWA =================
+// ================= COMPONENT PEMBANTU: DETAIL ROW =================
+//@Composable
+//fun ProfileDetailRow(icon: String, label: String) {
+//    Row(
+//        modifier = Modifier.padding(vertical = 4.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Text(icon, fontSize = 14.sp)
+//        Spacer(modifier = Modifier.width(8.dp))
+//        Text(label, fontSize = 13.sp, color = MitiGray)
+//    }
+//}
+
+// ================= COMPONENT PEMBANTU: DIALOG EDIT PROFILE MAHASISWA =================
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileDialog(
@@ -409,6 +421,53 @@ fun EditProfileDialog(
                             Spacer(modifier = Modifier.width(6.dp))
                             Text("Save Changes", color = backgroundColor, fontWeight = FontWeight.Bold)
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ================= COMPONENT PEMBANTU: REGISTERED ACTIVITY CARD =================
+@Composable
+fun RegisteredActivityCard(event: com.putrinadya.miti.domain.model.Event) {
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = MitiCard),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .width(4.dp)
+                    .fillMaxHeight()
+                    .height(80.dp)
+                    .background(event.categoryColor)
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(event.title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(event.category, fontSize = 11.sp, color = MitiGray)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("🕒 ${event.dayMonth} ${event.year}", fontSize = 11.sp, color = MitiGray)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("📍 ${event.location}", fontSize = 11.sp, color = MitiGray, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                }
+
+                Box(
+                    modifier = Modifier
+                        .background(MitiCyan.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text("Registered", fontSize = 10.sp, color = MitiCyan, fontWeight = FontWeight.Bold)
                     }
                 }
             }
