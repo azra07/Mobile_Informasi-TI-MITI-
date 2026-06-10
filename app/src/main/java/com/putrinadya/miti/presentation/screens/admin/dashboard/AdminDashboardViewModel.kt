@@ -6,15 +6,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.utils.DummyData
+import com.putrinadya.miti.domain.usecase.event.GetEventsUseCase
 
-class AdminDashboardViewModel : ViewModel() {
+class AdminDashboardViewModel(
+    private val getEventsUseCase: GetEventsUseCase = GetEventsUseCase()
+) : ViewModel() {
     var uiState by mutableStateOf(AdminDashboardUiState())
         private set
 
-    // Mengambil data awal dari DummyData secara dinamis
-    val eventsList = mutableStateListOf<Event>().apply {
-        addAll(DummyData.dummyEvents)
+    val eventsList = mutableStateListOf<Event>()
+
+    init {
+        loadEvents()
+    }
+
+    private fun loadEvents() {
+        val fetchedEvents = getEventsUseCase.execute()
+        eventsList.clear()
+        eventsList.addAll(fetchedEvents)
+        uiState = uiState.copy(totalEvents = eventsList.size)
     }
 
     fun onShowCreateEventDialog(show: Boolean) {
@@ -26,7 +36,7 @@ class AdminDashboardViewModel : ViewModel() {
     }
 
     fun createNewEvent(event: Event) {
-        eventsList.add(0, event) // Tambahkan event baru di baris teratas list
+        eventsList.add(0, event)
         uiState = uiState.copy(totalEvents = eventsList.size)
     }
 }

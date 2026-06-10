@@ -7,15 +7,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.putrinadya.miti.ui.theme.MitiNavy
+import com.putrinadya.miti.ui.theme.MitiWhite
 import androidx.compose.ui.unit.sp
 
 @Composable
 fun AddEditEventPage() {
     Box(
-        modifier = Modifier.fillMaxSize().background(Color(0xFF030A16)),
+        modifier = Modifier.fillMaxSize().background(MitiNavy),
         contentAlignment = Alignment.Center
     ) {
-        Text("Add / Edit Event Page", color = Color.White, fontSize = 18.sp)
+        Text("Add / Edit Event Page", color = MitiWhite, fontSize = 18.sp)
     }
 }

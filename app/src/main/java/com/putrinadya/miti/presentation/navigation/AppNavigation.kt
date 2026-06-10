@@ -18,7 +18,8 @@ fun AppNavigation() {
     NavHost(
         navController = navController,
         //startDestination = Screen.Login.route
-        startDestination = Screen.StudentDashboard.route
+        //startDestination = Screen.StudentDashboard.route
+        startDestination = Screen.AdminDashboard.route
     ) {
         // 1. Halaman Login
         composable(Screen.Login.route) {
