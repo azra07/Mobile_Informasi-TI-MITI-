@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.putrinadya.miti.domain.model.Event
 import com.putrinadya.miti.presentation.screens.profile.ProfileAdmin
 import com.putrinadya.miti.ui.theme.*
 
@@ -110,7 +111,11 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
 
                 // Daftar Event
                 items(viewModel.eventsList) { event ->
-                    AdminEventCard(event = event)
+                    AdminEventCard(
+                        event = event,
+                        onEdit = { viewModel.onEditEventClick(event) },
+                        onDelete = { viewModel.removeEvent(event) }
+                    )
                 }
             }
 
@@ -124,6 +129,18 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
                     }
                 )
             }
+
+            // POP-UP FORM DIALOG: EDIT EXISTING EVENT (Update)
+            if (uiState.showEditEventDialog && uiState.selectedEventForEdit != null) {
+                EditEventDialog(
+                    event = uiState.selectedEventForEdit, // Data lama yang akan ditampilkan di form
+                    onClose = { viewModel.onCancelEdit() },
+                    onSave = { updatedEvent ->
+                        viewModel.updateEvent(updatedEvent) // Memanggil Use Case Update
+                    }
+                )
+            }
+
         }
     }
 }

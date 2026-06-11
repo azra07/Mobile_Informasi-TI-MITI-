@@ -33,4 +33,21 @@
     <string name="no_title">Tanpa Judul</string>
     <string name="no_location">Lokasi Belum Ditentukan</string>
     <string name="general_category">Umum</string>
+
+    <string name="news_title">Wawasan IT Global</string>
+    <string name="error_loading">Gagal memuat berita</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Beranda</string>
+    <string name="nav_news">Berita</string>
+    <string name="nav_calendar">Kalender</string>
+    <string name="nav_profile">Profil</string>
+
+    <!-- Dashboard Content -->
+    <string name="greeting_evening">Selamat Malam,</string>
+    <string name="search_placeholder">Cari acara, workshops...</string>
+    <string name="section_featured">Acara Teknologi Unggulan</string>
+    <string name="section_upcoming">Acara Mendatang</string>
+    <string name="label_see_all">Lihat Semua</string>
+    <string name="label_view_all">Lihat Selengkapnya</string>
 </resources>

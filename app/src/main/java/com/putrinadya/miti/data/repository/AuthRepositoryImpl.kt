@@ -7,6 +7,7 @@ import com.putrinadya.miti.domain.repository.AuthRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -70,6 +71,22 @@ class AuthRepositoryImpl @Inject constructor(
             // Ini versi simpel, idealnya data ini diambil dari cache atau Firestore
             User(firebaseUser.uid, firebaseUser.displayName ?: "", firebaseUser.email ?: "", "student")
         } else null
+    }
+
+    override suspend fun getFullCurrentUser(): User? {
+        val firebaseUser = auth.currentUser ?: return null
+        return try {
+            val document = firestore.collection("users").document(firebaseUser.uid).get().await()
+            User(
+                uid = firebaseUser.uid,
+                name = document.getString("name") ?: "",
+                email = document.getString("email") ?: "",
+                role = document.getString("role") ?: "student",
+                nim = document.getString("nim") ?: ""
+            )
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override fun logout() {

@@ -5,14 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.putrinadya.miti.domain.model.User
+import com.putrinadya.miti.domain.usecase.auth.CheckSessionUseCase
 import com.putrinadya.miti.domain.usecase.auth.LoginUseCase
+import com.putrinadya.miti.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val checkSessionUseCase: CheckSessionUseCase
 ) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState())
         private set
@@ -56,6 +60,19 @@ class LoginViewModel @Inject constructor(
                         error = exception.message ?: "Login gagal. Periksa kembali email atau password Anda."
                     )
                 }
+            }
+        }
+    }
+
+    suspend fun checkUserSession(): String {
+        val user: User? = checkSessionUseCase()
+        return if (user == null) {
+            Screen.Login.route
+        } else {
+            if (user.role == "admin") {
+                Screen.AdminDashboard.route
+            } else {
+                Screen.StudentDashboard.route
             }
         }
     }

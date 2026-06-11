@@ -1,12 +1,15 @@
 package com.putrinadya.miti.data.mapper
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import com.putrinadya.miti.data.local.entity.EventEntity
 import com.putrinadya.miti.data.remote.dto.EventDto
 import com.putrinadya.miti.domain.model.Event
 import com.putrinadya.miti.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun EventDto.toDomain(): Event {
+fun EventDto.toDomain(id: String): Event {
     val dateObj = Date(this.timestamp ?: 0L)
 
     val sdfDayMonth = SimpleDateFormat("dd MMM", Locale.getDefault())
@@ -25,6 +28,7 @@ fun EventDto.toDomain(): Event {
     }
 
     return Event(
+        id = id,
         title = this.title ?: "",
         category = this.category ?: "",
         dayMonth = sdfDayMonth.format(dateObj),
@@ -36,5 +40,36 @@ fun EventDto.toDomain(): Event {
         maxParticipants = this.maxParticipants ?: 0,
         description = this.description ?: "",
         categoryColor = color
+    )
+}
+
+fun Event.toEntity(id: String, isDraft: Boolean = false): EventEntity {
+    return EventEntity(
+        id = id,
+        title = title,
+        category = category,
+        date = fullDate,
+        location = location,
+        description = description,
+        currentParticipants = currentParticipants,
+        maxParticipants = maxParticipants,
+        categoryColor = categoryColor.toArgb(),
+        isDraft = isDraft
+    )
+}
+
+fun EventEntity.toDomain(): Event {
+    return Event(
+        title = title,
+        category = category,
+        dayMonth = date.take(6),
+        year = "2026",
+        fullDate = date,
+        time = "10:00 AM",
+        location = location,
+        currentParticipants = currentParticipants,
+        maxParticipants = maxParticipants,
+        description = description,
+        categoryColor = Color(categoryColor)
     )
 }

@@ -1,10 +1,10 @@
 package com.putrinadya.miti.domain.usecase.event
 
-import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.utils.DummyData
+import com.putrinadya.miti.domain.repository.EventRepository
+import javax.inject.Inject
 
-class GetEventsUseCase {
-    fun execute(): List<Event> {
-        return DummyData.dummyEvents
-    }
+class GetEventsUseCase @Inject constructor(
+    private val repository: EventRepository
+){
+    operator fun invoke() = repository.getEvents()
 }

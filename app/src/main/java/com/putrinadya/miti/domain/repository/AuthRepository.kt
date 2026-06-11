@@ -16,5 +16,6 @@ interface AuthRepository {
         nim: String
     ): Flow<Result<Unit>>
     fun getCurrentUser(): User?
+    suspend fun getFullCurrentUser(): User?
     fun logout()
 }

@@ -20,10 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileAdmin(onBackClick: () -> Unit) {
+fun ProfileAdmin(
+    onBackClick: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
+) {
+    val userState by viewModel.uiState.collectAsState()
     var adminName by remember { mutableStateOf("Dr. Sarah Chen") }
     var adminNip by remember { mutableStateOf("198501152010121001") }
     var adminEmail by remember { mutableStateOf("sarah.chen@university.edu") }

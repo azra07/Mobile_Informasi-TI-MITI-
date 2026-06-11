@@ -4,10 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.putrinadya.miti.domain.usecase.history.GetActivityHistoryUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class HistoryViewModel(
-    private val getActivityHistoryUseCase: GetActivityHistoryUseCase = GetActivityHistoryUseCase()
+@HiltViewModel
+class HistoryViewModel @Inject constructor(
+    private val getActivityHistoryUseCase: GetActivityHistoryUseCase
 ) : ViewModel() {
     var uiState by mutableStateOf(HistoryUiState())
         private set
@@ -17,11 +22,14 @@ class HistoryViewModel(
     }
 
     private fun loadHistory() {
-        uiState = uiState.copy(isLoading = true)
-        val historyList = getActivityHistoryUseCase.execute()
-        uiState = uiState.copy(
-            pastEvents = historyList,
-            isLoading = false
-        )
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            getActivityHistoryUseCase.execute().collect { historyList ->
+                uiState = uiState.copy(
+                    pastEvents = historyList,
+                    isLoading = false
+                )
+            }
+        }
     }
 }

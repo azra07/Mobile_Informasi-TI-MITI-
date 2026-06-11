@@ -33,4 +33,21 @@
     <string name="no_title">No Title</string>
     <string name="no_location">Location Not Determined</string>
     <string name="general_category">General</string>
+
+    <string name="news_title">Global IT Insights</string>
+    <string name="error_loading">Failed to load news</string>
+
+    <!-- Bottom Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_news">News</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Dashboard Content -->
+    <string name="greeting_evening">Good Evening,</string>
+    <string name="search_placeholder">Search events, workshops...</string>
+    <string name="section_featured">Featured Tech Events</string>
+    <string name="section_upcoming">Upcoming Activities</string>
+    <string name="label_see_all">See all</string>
+    <string name="label_view_all">View all</string>
 </resources>
