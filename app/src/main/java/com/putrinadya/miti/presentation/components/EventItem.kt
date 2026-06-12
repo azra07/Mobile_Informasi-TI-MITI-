@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -25,6 +26,13 @@ fun EventItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+    val categoryColor = try {
+        Color(android.graphics.Color.parseColor(event.categoryColorHex))
+    } catch (e: Exception) {
+        MitiGray // Warna fallback dari color.kt jika terjadi kegagalan parsing
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -40,7 +48,7 @@ fun EventItem(
                 modifier = Modifier
                     .width(4.dp)
                     .height(48.dp)
-                    .background(event.categoryColor, RoundedCornerShape(2.dp))
+                    .background(categoryColor, RoundedCornerShape(2.dp)) // Menggunakan categoryColor hasil konversi
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -61,7 +69,7 @@ fun EventItem(
                     Text(
                         text = if (event.category.isEmpty()) stringResource(R.string.general_category) else event.category,
                         fontSize = 11.sp,
-                        color = event.categoryColor,
+                        color = categoryColor, // Menggunakan categoryColor hasil konversi
                         fontWeight = FontWeight.Bold
                     )
                     Text(" • ", fontSize = 11.sp, color = MitiGray)

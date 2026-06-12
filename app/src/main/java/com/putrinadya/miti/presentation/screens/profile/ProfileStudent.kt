@@ -263,17 +263,17 @@ fun ProfileStudent(viewModel: StudentDashboardViewModel) {
 }
 
 // ================= COMPONENT PEMBANTU: DETAIL ROW =================
-//@Composable
-//fun ProfileDetailRow(icon: String, label: String) {
-//    Row(
-//        modifier = Modifier.padding(vertical = 4.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Text(icon, fontSize = 14.sp)
-//        Spacer(modifier = Modifier.width(8.dp))
-//        Text(label, fontSize = 13.sp, color = MitiGray)
-//    }
-//}
+@Composable
+private fun ProfileDetailRow(icon: String, label: String) {
+    Row(
+        modifier = Modifier.padding(vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(icon, fontSize = 14.sp)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(label, fontSize = 13.sp, color = MitiGray)
+    }
+}
 
 // ================= COMPONENT PEMBANTU: DIALOG EDIT PROFILE MAHASISWA =================
 @OptIn(ExperimentalMaterial3Api::class)
@@ -289,18 +289,13 @@ fun EditProfileDialog(
     var nimInput by remember { mutableStateOf(currentNim) }
     var emailInput by remember { mutableStateOf(currentEmail) }
 
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
-
     Dialog(
         onDismissRequest = onClose,
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Card(
             modifier = Modifier.fillMaxWidth().padding(24.dp).wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF05111E)),
+            colors = CardDefaults.cardColors(containerColor = MitiCard),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(
@@ -313,83 +308,83 @@ fun EditProfileDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Edit Profile", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textWhite)
+                    Text("Edit Profile", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                     Box(
-                        modifier = Modifier.size(32.dp).background(Color.White.copy(alpha = 0.1f), CircleShape).clickable { onClose() },
+                        modifier = Modifier.size(32.dp).background(MitiWhite.copy(alpha = 0.1f), CircleShape).clickable { onClose() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Close, contentDescription = "Close", tint = MitiWhite, modifier = Modifier.size(16.dp))
                     }
                 }
 
                 Box(contentAlignment = Alignment.BottomEnd) {
                     Box(
-                        modifier = Modifier.size(90.dp).background(primaryCyan, CircleShape),
+                        modifier = Modifier.size(90.dp).background(MitiCyan, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("AJ", fontWeight = FontWeight.Bold, color = backgroundColor, fontSize = 28.sp)
+                        Text("AJ", fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 28.sp)
                     }
                     Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .background(primaryCyan, CircleShape)
-                            .border(2.dp, Color(0xFF05111E), CircleShape),
+                            .background(MitiCyan, CircleShape)
+                            .border(2.dp, MitiCard, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Change Photo", tint = backgroundColor, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Add, contentDescription = "Change Photo", tint = MitiNavy, modifier = Modifier.size(16.dp))
                     }
                 }
-                Text("Tap to change photo", fontSize = 12.sp, color = Color.Gray)
+                Text("Tap to change photo", fontSize = 12.sp, color = MitiGray)
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Full Name", color = textWhite, fontSize = 12.sp)
+                    Text("Full Name", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nameInput,
                         onValueChange = { nameInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("NIM (Student ID)", color = textWhite, fontSize = 12.sp)
+                    Text("NIM (Student ID)", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nimInput,
                         onValueChange = { nimInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Email Address", color = textWhite, fontSize = 12.sp)
+                    Text("Email Address", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = emailInput,
                         onValueChange = { emailInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -407,19 +402,19 @@ fun EditProfileDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF142233)),
                         shape = RoundedCornerShape(22.dp)
                     ) {
-                        Text("Cancel", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text("Cancel", color = MitiWhite, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
                         onClick = { onSave(nameInput, nimInput, emailInput) },
                         modifier = Modifier.weight(1.3f).height(45.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryCyan),
+                        colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
                         shape = RoundedCornerShape(22.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = "Save", tint = backgroundColor, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Check, contentDescription = "Save", tint = MitiNavy, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Save Changes", color = backgroundColor, fontWeight = FontWeight.Bold)
+                            Text("Save Changes", color = MitiNavy, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -431,6 +426,13 @@ fun EditProfileDialog(
 // ================= COMPONENT PEMBANTU: REGISTERED ACTIVITY CARD =================
 @Composable
 fun RegisteredActivityCard(event: com.putrinadya.miti.domain.model.Event) {
+    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+    val categoryColor = try {
+        Color(android.graphics.Color.parseColor(event.categoryColorHex))
+    } catch (e: Exception) {
+        MitiGray
+    }
+
     Card(
         modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MitiCard),
@@ -442,7 +444,7 @@ fun RegisteredActivityCard(event: com.putrinadya.miti.domain.model.Event) {
                     .width(4.dp)
                     .fillMaxHeight()
                     .height(80.dp)
-                    .background(event.categoryColor)
+                    .background(categoryColor) // Menggunakan categoryColor hasil konversi
             )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(12.dp),

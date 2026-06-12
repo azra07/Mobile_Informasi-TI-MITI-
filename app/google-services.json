@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "322023857079",
-    "project_id": "mitiapp-4b347",
-    "storage_bucket": "mitiapp-4b347.firebasestorage.app"
+    "project_number": "193167434883",
+    "project_id": "miti-4c61a",
+    "storage_bucket": "miti-4c61a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:322023857079:android:b6b079a086c57ebda8a632",
+        "mobilesdk_app_id": "1:193167434883:android:9ae1d4ce0de5a6c64ba7b6",
         "android_client_info": {
           "package_name": "com.putrinadya.miti"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBwfN3K7XnAe938e38jo5dyLFz-1fgcUQc"
+          "current_key": "AIzaSyCK7Tbk0hpyrl7VOk3xhWbJezs6fBSZ1-0"
         }
       ],
       "services": {

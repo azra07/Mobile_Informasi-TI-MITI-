@@ -97,7 +97,15 @@ fun CalendarPage(
                             val dayEvent = uiState.events.find {
                                 it.year.toIntOrNull() == dayNumber && it.dayMonth == "Apr"
                             }
-                            val eventColor = dayEvent?.categoryColor
+
+                            // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+                            val eventColor = dayEvent?.let { event ->
+                                try {
+                                    Color(android.graphics.Color.parseColor(event.categoryColorHex))
+                                } catch (e: Exception) {
+                                    MitiGray // Warna default jika gagal parsing
+                                }
+                            }
 
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,

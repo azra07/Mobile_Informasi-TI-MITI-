@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.putrinadya.miti.domain.model.Event
 import com.putrinadya.miti.ui.theme.*
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun StatCard(title: String, value: String, iconText: String, modifier: Modifier = Modifier) {
@@ -59,13 +61,29 @@ fun AdminEventCard(
     onDelete: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
+
+    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+    val categoryColor = try {
+        Color(android.graphics.Color.parseColor(event.categoryColorHex))
+    } catch (e: Exception) {
+        MitiGray
+    }
+
     Card(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
         colors = CardDefaults.cardColors(containerColor = MitiCard),
         shape = RoundedCornerShape(12.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Box{
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 4.dp, top = 12.dp, bottom = 12.dp, end = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Menu Titik Tiga (MoreVert) di sebelah kiri
+            Box {
                 IconButton(onClick = { showMenu = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MitiGray)
                 }
@@ -84,34 +102,93 @@ fun AdminEventCard(
                     )
                 }
             }
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+
+            Spacer(modifier = Modifier.width(4.dp))
+
+            // Kolom Konten Utama (Terbagi Menjadi 3 Baris Rapi)
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(event.title, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Box(
-                            modifier = Modifier
-                                .background(event.categoryColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Text(event.category, fontSize = 10.sp, color = event.categoryColor, fontWeight = FontWeight.Bold)
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("👥 ${event.currentParticipants}/${event.maxParticipants}", fontSize = 11.sp, color = MitiGray)
-                    }
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("🕒 ${event.dayMonth} ${event.year} at ${event.time}", fontSize = 11.sp, color = MitiGray)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("📍 ${event.location}", fontSize = 11.sp, color = MitiGray, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                // BARIS 1: Judul Event & Badge Jenis Event
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = event.title,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MitiWhite,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .background(categoryColor.copy(alpha = 0.15f), RoundedCornerShape(4.dp))
+                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                    ) {
+                        Text(event.category, fontSize = 10.sp, color = categoryColor, fontWeight = FontWeight.Bold)
                     }
                 }
-                IconButton(onClick = { }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MitiGray)
+
+                // BARIS 2: Deteksi Hari Secara Otomatis Berdasarkan Input Tanggal
+                val formattedDate = remember(event.fullDate) {
+                    try {
+                        val inputFormat = SimpleDateFormat("M/d/yyyy", Locale.US)
+                        val dateObj = inputFormat.parse(event.fullDate)
+                        if (dateObj != null) {
+                            // Menggunakan Locale("in", "ID") agar nama hari selalu berbahasa Indonesia
+                            val outputFormat = SimpleDateFormat("EEEE, dd MMM yyyy", Locale("in", "ID"))
+                            outputFormat.format(dateObj)
+                        } else {
+                            val actualYear = event.fullDate.split("/").lastOrNull() ?: "2026"
+                            "Senin, ${event.dayMonth} ${event.year}, $actualYear"
+                        }
+                    } catch (e: Exception) {
+                        val actualYear = event.fullDate.split("/").lastOrNull() ?: "2026"
+                        "Senin, ${event.dayMonth} ${event.year}, $actualYear"
+                    }
+                }
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "📅 $formattedDate",
+                        fontSize = 11.sp,
+                        color = MitiGray
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "🕒 ${event.time}",
+                        fontSize = 11.sp,
+                        color = MitiGray
+                    )
+                }
+
+                // BARIS 3: Kapasitas Peserta & Lokasi Acara
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "👥 ${event.currentParticipants}/${event.maxParticipants}",
+                        fontSize = 11.sp,
+                        color = MitiGray
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "📍 ${event.location}",
+                        fontSize = 11.sp,
+                        color = MitiGray,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }

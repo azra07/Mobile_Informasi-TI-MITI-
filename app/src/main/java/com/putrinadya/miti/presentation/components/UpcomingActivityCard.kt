@@ -24,6 +24,13 @@ fun UpcomingActivityCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+    val categoryColor = try {
+        Color(android.graphics.Color.parseColor(event.categoryColorHex))
+    } catch (e: Exception) {
+        MitiGray // Warna default jika gagal parsing
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -84,7 +91,7 @@ fun UpcomingActivityCard(
             Box(
                 modifier = Modifier
                     .background(
-                        event.categoryColor.copy(alpha = 0.2f),
+                        categoryColor.copy(alpha = 0.2f), // Menggunakan categoryColor hasil konversi
                         RoundedCornerShape(8.dp)
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -92,7 +99,7 @@ fun UpcomingActivityCard(
                 Text(
                     text = event.category,
                     fontSize = 11.sp,
-                    color = event.categoryColor,
+                    color = categoryColor, // Menggunakan categoryColor hasil konversi
                     fontWeight = FontWeight.Bold
                 )
             }

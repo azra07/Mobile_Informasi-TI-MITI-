@@ -14,19 +14,30 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.putrinadya.miti.R
 import com.putrinadya.miti.domain.model.Event
 import com.putrinadya.miti.presentation.screens.profile.ProfileAdmin
 import com.putrinadya.miti.ui.theme.*
+import androidx.navigation.NavController
 
 @Composable
-fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
+fun AdminDashboardPage(
+    viewModel: AdminDashboardViewModel,
+    navController: NavController // <--- 2. Terima parameter ini di sini
+) {
     val uiState = viewModel.uiState
 
     if (uiState.currentSubScreen == "profile") {
-        ProfileAdmin(onBackClick = { viewModel.onNavigateToSubScreen("dashboard") })
+        // Mengirimkan instance viewModel agar halaman ProfileAdmin memuat data NIP, Nama, dll secara dinamis
+        ProfileAdmin(
+            viewModel = viewModel,
+            navController = navController,
+            onBackClick = { viewModel.onNavigateToSubScreen("dashboard") }
+        )
     } else {
         Scaffold(
             floatingActionButton = {
@@ -55,18 +66,20 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text("MITI", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                            Text(stringResource(id = R.string.app_name), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(8.dp).background(Color.Green, CircleShape))
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text("Admin Mode", fontSize = 12.sp, color = MitiGray)
                             }
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text("Good Evening,", fontSize = 14.sp, color = MitiGray)
-                            Text("Dr.!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                            Text(text = "Selamat datang!", fontSize = 14.sp, color = MitiGray)
+
+                            // MEMBACA NAMA ADMIN SECARA DINAMIS DARI FIRESTORE DATABASE
+                            Text("${uiState.adminName}!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                         }
 
-                        // Avatar DSC
+                        // Avatar DSC (Menampilkan Inisial Nama Admin Secara Dinamis)
                         Box(
                             modifier = Modifier
                                 .size(45.dp)
@@ -74,7 +87,8 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
                                 .clickable { viewModel.onNavigateToSubScreen("profile") },
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("DSC", fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 15.sp)
+                            val initials = if (uiState.adminName.length >= 2) uiState.adminName.take(2).uppercase() else "AD"
+                            Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 15.sp)
                         }
                     }
                 }
@@ -101,7 +115,7 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
                         Text("Manage Events", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                         Box(
                             modifier = Modifier
-                                .background(Color(0xFF142233), RoundedCornerShape(12.dp))
+                                .background(MitiCard, RoundedCornerShape(12.dp))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
                             Text("${viewModel.eventsList.size} events", color = MitiGray, fontSize = 12.sp)
@@ -125,7 +139,6 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
                     onClose = { viewModel.onShowCreateEventDialog(false) },
                     onSave = { newEvent ->
                         viewModel.createNewEvent(newEvent)
-                        viewModel.onShowCreateEventDialog(false)
                     }
                 )
             }
@@ -133,14 +146,13 @@ fun AdminDashboardPage(viewModel: AdminDashboardViewModel) {
             // POP-UP FORM DIALOG: EDIT EXISTING EVENT (Update)
             if (uiState.showEditEventDialog && uiState.selectedEventForEdit != null) {
                 EditEventDialog(
-                    event = uiState.selectedEventForEdit, // Data lama yang akan ditampilkan di form
+                    event = uiState.selectedEventForEdit,
                     onClose = { viewModel.onCancelEdit() },
                     onSave = { updatedEvent ->
-                        viewModel.updateEvent(updatedEvent) // Memanggil Use Case Update
+                        viewModel.updateEvent(updatedEvent)
                     }
                 )
             }
-
         }
     }
 }

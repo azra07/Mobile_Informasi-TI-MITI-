@@ -20,31 +20,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.hilt.navigation.compose.hiltViewModel
+import com.putrinadya.miti.presentation.screens.admin.dashboard.AdminDashboardViewModel
+import com.putrinadya.miti.ui.theme.*
+import androidx.navigation.NavController
+import com.putrinadya.miti.presentation.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileAdmin(
-    onBackClick: () -> Unit,
-    viewModel: ProfileViewModel = hiltViewModel()
+    viewModel: AdminDashboardViewModel,
+    navController: NavController,// Menerima ViewModel dashboard secara terpadu
+    onBackClick: () -> Unit
 ) {
-    val userState by viewModel.uiState.collectAsState()
-    var adminName by remember { mutableStateOf("Dr. Sarah Chen") }
-    var adminNip by remember { mutableStateOf("198501152010121001") }
-    var adminEmail by remember { mutableStateOf("sarah.chen@university.edu") }
+    val uiState = viewModel.uiState
+
+    // Menginisialisasi state lokal dari database secara dinamis saat data sukses dimuat
+    var adminName by remember(uiState.adminName) { mutableStateOf(uiState.adminName) }
+    var adminNip by remember(uiState.adminNip) { mutableStateOf(uiState.adminNip) }
+    var adminEmail by remember(uiState.adminEmail) { mutableStateOf(uiState.adminEmail) }
 
     var showEditDialog by remember { mutableStateOf(false) }
     var isDarkMode by remember { mutableStateOf(true) }
 
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
-
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MitiNavy)
             .padding(horizontal = 16.dp)
     ) {
         // Header
@@ -55,14 +56,14 @@ fun ProfileAdmin(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = textWhite)
+                Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = MitiWhite)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Profile",
+                text = "Profil Admin",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = textWhite
+                color = MitiWhite
             )
         }
 
@@ -74,7 +75,7 @@ fun ProfileAdmin(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
+                    colors = CardDefaults.cardColors(containerColor = MitiCard),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -82,7 +83,7 @@ fun ProfileAdmin(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(80.dp)
-                                .background(primaryCyan)
+                                .background(MitiCyan)
                         )
 
                         Box(
@@ -94,11 +95,13 @@ fun ProfileAdmin(
                                 modifier = Modifier
                                     .offset(y = (-40).dp)
                                     .size(80.dp)
-                                    .background(Color(0xFF00B0FF), CircleShape)
-                                    .border(4.dp, cardColor, CircleShape),
+                                    .background(MitiCyan, CircleShape)
+                                    .border(4.dp, MitiCard, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                Text("DSC", fontWeight = FontWeight.Bold, color = backgroundColor, fontSize = 22.sp)
+                                // Menghasilkan inisial nama asli Admin secara dinamis (contoh: "amang" -> "AM")
+                                val initials = if (adminName.length >= 2) adminName.take(2).uppercase() else "AD"
+                                Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 22.sp)
                             }
 
                             OutlinedButton(
@@ -107,15 +110,15 @@ fun ProfileAdmin(
                                     .align(Alignment.TopEnd)
                                     .padding(top = 8.dp),
                                 shape = RoundedCornerShape(20.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = primaryCyan),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MitiCyan),
                                 border = ButtonDefaults.outlinedButtonBorder.copy(
-                                    brush = SolidColor(primaryCyan)
+                                    brush = SolidColor(MitiCyan)
                                 )
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Icon(Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(14.dp))
                                     Spacer(modifier = Modifier.width(6.dp))
-                                    Text("Edit Profile", fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                    Text("Edit Profil", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 }
                             }
                         }
@@ -123,15 +126,16 @@ fun ProfileAdmin(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp)
+                                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp, top = 12.dp)
                         ) {
-                            Text(adminName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = textWhite)
+                            Text(adminName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                             Spacer(modifier = Modifier.height(12.dp))
 
+                            // Seluruh data diambil secara dinamis dari database Firestore
                             ProfileDetailRow(icon = "👤", label = "NIP / Staff ID: $adminNip")
-                            ProfileDetailRow(icon = "💼", label = "Dosen")
+                            ProfileDetailRow(icon = "💼", label = uiState.adminTitle.ifEmpty { "Dosen" })
                             ProfileDetailRow(icon = "✉️", label = adminEmail)
-                            ProfileDetailRow(icon = "🏛️", label = "IT Department")
+                            ProfileDetailRow(icon = "🏛️", label = uiState.adminDepartment.ifEmpty { "Teknologi Informasi" })
                         }
                     }
                 }
@@ -141,7 +145,7 @@ fun ProfileAdmin(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = cardColor),
+                    colors = CardDefaults.cardColors(containerColor = MitiCard),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
@@ -156,16 +160,16 @@ fun ProfileAdmin(
                                 Text("🌙", fontSize = 18.sp)
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
-                                    Text("Dark Mode", fontSize = 14.sp, color = textWhite, fontWeight = FontWeight.Bold)
-                                    Text(if (isDarkMode) "On" else "Off", fontSize = 11.sp, color = Color.Gray)
+                                    Text("Mode Gelap", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
+                                    Text(if (isDarkMode) "Aktif" else "Nonaktif", fontSize = 11.sp, color = MitiGray)
                                 }
                             }
                             Switch(
                                 checked = isDarkMode,
                                 onCheckedChange = { isDarkMode = it },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = backgroundColor,
-                                    checkedTrackColor = primaryCyan
+                                    checkedThumbColor = MitiNavy,
+                                    checkedTrackColor = MitiCyan
                                 )
                             )
                         }
@@ -183,11 +187,11 @@ fun ProfileAdmin(
                                 Text("🌐", fontSize = 18.sp)
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
-                                    Text("Language", fontSize = 14.sp, color = textWhite, fontWeight = FontWeight.Bold)
-                                    Text("English", fontSize = 11.sp, color = Color.Gray)
+                                    Text("Bahasa", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
+                                    Text("Bahasa Indonesia", fontSize = 11.sp, color = MitiGray)
                                 }
                             }
-                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Go", tint = Color.Gray)
+                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Pergi", tint = MitiGray)
                         }
                     }
                 }
@@ -196,7 +200,14 @@ fun ProfileAdmin(
             // Tombol Logout
             item {
                 OutlinedButton(
-                    onClick = { },
+                    onClick = {
+                        viewModel.logout() // 1. Keluar dari Firebase Auth
+
+                        // 2. Navigasi Aman: Arahkan ke Login dan hapus rute Dashboard Admin dari riwayat
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(Screen.AdminDashboard.route) { inclusive = true }
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp)
@@ -208,9 +219,9 @@ fun ProfileAdmin(
                     )
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.ExitToApp, contentDescription = "Logout", modifier = Modifier.size(18.dp))
+                        Icon(Icons.Default.ExitToApp, contentDescription = "Keluar Akun", modifier = Modifier.size(18.dp))
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Logout", fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                        Text("Keluar Akun", fontWeight = FontWeight.Bold, fontSize = 15.sp)
                     }
                 }
             }
@@ -233,16 +244,16 @@ fun ProfileAdmin(
     }
 }
 
-// ================= COMPONENT PEMBANTU: DETAIL ROW =================
+// ================= COMPONENT PEMBANTU: DETAIL ROW (DIBUAT PRIVATE) =================
 @Composable
-fun ProfileDetailRow(icon: String, label: String) {
+private fun ProfileDetailRow(icon: String, label: String) {
     Row(
         modifier = Modifier.padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(icon, fontSize = 14.sp)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(label, fontSize = 13.sp, color = Color.Gray)
+        Text(label, fontSize = 13.sp, color = MitiGray)
     }
 }
 
@@ -260,11 +271,6 @@ fun EditAdminProfileDialog(
     var nipInput by remember { mutableStateOf(currentNip) }
     var emailInput by remember { mutableStateOf(currentEmail) }
 
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
-
     Dialog(
         onDismissRequest = onClose,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -274,7 +280,7 @@ fun EditAdminProfileDialog(
                 .fillMaxWidth()
                 .padding(24.dp)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF05111E)),
+            colors = CardDefaults.cardColors(containerColor = MitiCard),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(
@@ -289,15 +295,15 @@ fun EditAdminProfileDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Edit Profile", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = textWhite)
+                    Text("Edit Profil", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(Color.White.copy(alpha = 0.1f), CircleShape)
+                            .background(MitiWhite.copy(alpha = 0.1f), CircleShape)
                             .clickable { onClose() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.White, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MitiWhite, modifier = Modifier.size(16.dp))
                     }
                 }
 
@@ -305,72 +311,74 @@ fun EditAdminProfileDialog(
                     Box(
                         modifier = Modifier
                             .size(90.dp)
-                            .background(primaryCyan, CircleShape),
+                            .background(MitiCyan, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("DSC", fontWeight = FontWeight.Bold, color = backgroundColor, fontSize = 26.sp)
+                        // Menggunakan inisial nama edit dinamis (contoh: "amang" -> "AM")
+                        val initials = if (nameInput.length >= 2) nameInput.take(2).uppercase() else "AD"
+                        Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 26.sp)
                     }
                     Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .background(primaryCyan, CircleShape)
-                            .border(2.dp, Color(0xFF05111E), CircleShape),
+                            .background(MitiCyan, CircleShape)
+                            .border(2.dp, MitiCard, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Change Photo", tint = backgroundColor, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Add, contentDescription = "Ubah Foto", tint = MitiNavy, modifier = Modifier.size(16.dp))
                     }
                 }
-                Text("Tap to change photo", fontSize = 12.sp, color = Color.Gray)
+                Text("Ketuk untuk mengubah foto", fontSize = 12.sp, color = MitiGray)
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Full Name", color = textWhite, fontSize = 12.sp)
+                    Text("Nama Lengkap", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nameInput,
                         onValueChange = { nameInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("NIP / Staff ID", color = textWhite, fontSize = 12.sp)
+                    Text("NIP / Staff ID", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nipInput,
                         onValueChange = { nipInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Email Address", color = textWhite, fontSize = 12.sp)
+                    Text("Alamat Email", color = MitiWhite, fontSize = 12.sp)
                     OutlinedTextField(
                         value = emailInput,
                         onValueChange = { emailInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = textWhite,
-                            unfocusedTextColor = textWhite,
-                            focusedContainerColor = cardColor,
-                            unfocusedContainerColor = cardColor,
-                            focusedBorderColor = primaryCyan,
+                            focusedTextColor = MitiWhite,
+                            unfocusedTextColor = MitiWhite,
+                            focusedContainerColor = MitiNavy,
+                            unfocusedContainerColor = MitiNavy,
+                            focusedBorderColor = MitiCyan,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -388,19 +396,19 @@ fun EditAdminProfileDialog(
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF142233)),
                         shape = RoundedCornerShape(22.dp)
                     ) {
-                        Text("Cancel", color = Color.White, fontWeight = FontWeight.Bold)
+                        Text("Batal", color = MitiWhite, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
                         onClick = { onSave(nameInput, nipInput, emailInput) },
                         modifier = Modifier.weight(1.3f).height(45.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = primaryCyan),
+                        colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
                         shape = RoundedCornerShape(22.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = "Save", tint = backgroundColor, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Check, contentDescription = "Simpan", tint = MitiNavy, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Save Changes", color = backgroundColor, fontWeight = FontWeight.Bold)
+                            Text("Simpan Perubahan", color = MitiNavy, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

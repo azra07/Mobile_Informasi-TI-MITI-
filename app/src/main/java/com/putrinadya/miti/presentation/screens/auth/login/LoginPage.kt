@@ -8,12 +8,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.putrinadya.miti.R
+import com.putrinadya.miti.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,11 +25,6 @@ fun LoginPage(
     onNavigateToAdminDashboard: () -> Unit
 ) {
     val uiState = viewModel.uiState
-
-    val backgroundColor = Color(0xFF030A16)
-    val cardColor = Color(0xFF091522)
-    val primaryCyan = Color(0xFF00E5FF)
-    val textWhite = Color(0xFFFFFFFF)
 
     // Efek Navigasi setelah login sukses
     LaunchedEffect(uiState.isSuccess) {
@@ -44,7 +41,7 @@ fun LoginPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(backgroundColor)
+            .background(MitiNavy)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
@@ -57,37 +54,37 @@ fun LoginPage(
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .background(primaryCyan, shape = RoundedCornerShape(16.dp)),
+                    .background(MitiCyan, shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "✦", fontSize = 36.sp, color = backgroundColor)
+                Text(text = "✦", fontSize = 36.sp, color = MitiNavy)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "IT Activity Hub",
+                text = stringResource(id = R.string.app_name),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = textWhite
+                color = MitiWhite
             )
             Text(
-                text = "Manage your university tech events",
+                text = stringResource(id = R.string.login_subtitle),
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = MitiGray
             )
         }
 
         // Card Login Form
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = cardColor),
+            colors = CardDefaults.cardColors(containerColor = MitiCard),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = "Welcome Back",
+                    text = stringResource(id = R.string.login_welcome),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = textWhite,
+                    color = MitiWhite,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
@@ -96,39 +93,39 @@ fun LoginPage(
                     Text(text = it, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
                 }
 
-                Text(text = "Email / NIM", color = textWhite, fontSize = 12.sp)
+                Text(text = stringResource(id = R.string.email_label), color = MitiWhite, fontSize = 12.sp)
                 OutlinedTextField(
                     value = uiState.emailOrNim,
                     onValueChange = { viewModel.onEmailOrNimChanged(it) },
-                    placeholder = { Text("Enter your email or NIM", color = Color.Gray) },
+                    placeholder = { Text("Enter your email", color = MitiGray) },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = textWhite,
-                        unfocusedTextColor = textWhite,
-                        focusedContainerColor = backgroundColor,
-                        unfocusedContainerColor = backgroundColor,
-                        focusedBorderColor = primaryCyan,
+                        focusedTextColor = MitiWhite,
+                        unfocusedTextColor = MitiWhite,
+                        focusedContainerColor = MitiNavy,
+                        unfocusedContainerColor = MitiNavy,
+                        focusedBorderColor = MitiCyan,
                         unfocusedBorderColor = Color.Transparent
                     )
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = "Password", color = textWhite, fontSize = 12.sp)
+                Text(text = stringResource(id = R.string.password_label), color = MitiWhite, fontSize = 12.sp)
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = { viewModel.onPasswordChanged(it) },
-                    placeholder = { Text("Enter your password", color = Color.Gray) },
+                    placeholder = { Text("Enter your password", color = MitiGray) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = textWhite,
-                        unfocusedTextColor = textWhite,
-                        focusedContainerColor = backgroundColor,
-                        unfocusedContainerColor = backgroundColor,
-                        focusedBorderColor = primaryCyan,
+                        focusedTextColor = MitiWhite,
+                        unfocusedTextColor = MitiWhite,
+                        focusedContainerColor = MitiNavy,
+                        unfocusedContainerColor = MitiNavy,
+                        focusedBorderColor = MitiCyan,
                         unfocusedBorderColor = Color.Transparent
                     )
                 )
@@ -141,12 +138,12 @@ fun LoginPage(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(
-                onClick = { viewModel.login("student") },
+                onClick = { viewModel.login("mahasiswa") },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = primaryCyan),
+                colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = "Login as Student", color = backgroundColor, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.login_as_student), color = MitiNavy, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -155,19 +152,19 @@ fun LoginPage(
                 onClick = { viewModel.login("admin") },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = primaryCyan),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MitiCyan),
                 border = ButtonDefaults.outlinedButtonBorder.copy(
-                    brush = androidx.compose.ui.graphics.SolidColor(primaryCyan)
+                    brush = androidx.compose.ui.graphics.SolidColor(MitiCyan)
                 )
             ) {
-                Text(text = "Login as Admin / Lecturer", color = primaryCyan, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.login_as_admin), color = MitiCyan, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Teknologi Informasi - University Lambung Mangkurat",
+                text = "Teknologi Informasi | University Lambung Mangkurat",
                 fontSize = 11.sp,
-                color = Color.Gray
+                color = MitiGray
             )
         }
     }

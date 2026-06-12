@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
                     } else {
                         uiState = uiState.copy(
                             isLoading = false,
-                            error = "Akses ditolak. Anda buka $role"
+                            error = "Akses ditolak. Anda bukan $role"
                         )
                     }
                 }

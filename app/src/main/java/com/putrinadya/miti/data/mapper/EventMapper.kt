@@ -1,75 +1,81 @@
 package com.putrinadya.miti.data.mapper
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.putrinadya.miti.data.local.entity.EventEntity
 import com.putrinadya.miti.data.remote.dto.EventDto
 import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 fun EventDto.toDomain(id: String): Event {
-    val dateObj = Date(this.timestamp ?: 0L)
-
-    val sdfDayMonth = SimpleDateFormat("dd MMM", Locale.getDefault())
-    val sdfYear = SimpleDateFormat("yyyy", Locale.getDefault())
-    val sdfFullDate = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-    val sdfTime = SimpleDateFormat("hh:mm a", Locale.getDefault())
-
-    val color = when (this.category?.lowercase()) {
-        "workshop" -> MitiWorkshop
-        "hackathon" -> MitiHackathon
-        "seminar" -> MitiSeminar
-        "webinar" -> MitiWebinar
-        "competition" -> MitiCompetition
-        "fun match" -> MitiFunMatch
-        else -> MitiGray
-    }
-
     return Event(
         id = id,
         title = this.title ?: "",
         category = this.category ?: "",
-        dayMonth = sdfDayMonth.format(dateObj),
-        year = sdfYear.format(dateObj),
-        fullDate = sdfFullDate.format(dateObj),
-        time = sdfTime.format(dateObj),
+        dayMonth = this.dayMonth ?: "Event",
+        year = this.year ?: "",
+        fullDate = this.fullDate ?: "",
+        time = this.time ?: "", // Membaca jam dinamis dari Firestore
         location = this.location ?: "",
         currentParticipants = this.currentParticipants ?: 0,
         maxParticipants = this.maxParticipants ?: 0,
         description = this.description ?: "",
-        categoryColor = color
+        categoryColorHex = this.categoryColorHex ?: "#C583FF"
     )
 }
 
 fun Event.toEntity(id: String, isDraft: Boolean = false): EventEntity {
+    val colorInt = try {
+        android.graphics.Color.parseColor(categoryColorHex)
+    } catch (e: Exception) {
+        android.graphics.Color.GRAY
+    }
+
     return EventEntity(
         id = id,
         title = title,
         category = category,
-        date = fullDate,
+        date = "$fullDate|$time", // SOLUSI: Menggabungkan Tanggal dan Waktu agar tersimpan di SQLite Room
         location = location,
         description = description,
         currentParticipants = currentParticipants,
         maxParticipants = maxParticipants,
-        categoryColor = categoryColor.toArgb(),
+        categoryColor = colorInt,
         isDraft = isDraft
     )
 }
 
 fun EventEntity.toDomain(): Event {
+    val colorHex = String.format("#%06X", 0xFFFFFF and categoryColor)
+
+    // Memecah kembali data Tanggal dan Waktu yang digabung tadi
+    val dateParts = date.split("|")
+    val rawDate = dateParts.getOrNull(0) ?: date
+    val rawTime = dateParts.getOrNull(1) ?: "10:00 WITA" // Fallback jika data lama kosong
+
+    // Logika Parser tanggal dinamis dari rawDate ("MM/DD/YYYY")
+    val rawDateParts = rawDate.split("/")
+    val parsedMonth = if (rawDateParts.isNotEmpty()) {
+        when (rawDateParts[0].toIntOrNull()) {
+            1 -> "Jan"; 2 -> "Feb"; 3 -> "Mar"; 4 -> "Apr"; 5 -> "May"; 6 -> "Jun"
+            7 -> "Jul"; 8 -> "Aug"; 9 -> "Sep"; 10 -> "Oct"; 11 -> "Nov"; 12 -> "Dec"
+            else -> "Event"
+        }
+    } else "Event"
+
+    val parsedDay = if (rawDateParts.size >= 2) rawDateParts[1] else "1"
+
     return Event(
+        id = id,
         title = title,
         category = category,
-        dayMonth = date.take(6),
-        year = "2026",
-        fullDate = date,
-        time = "10:00 AM",
+        dayMonth = parsedMonth,
+        year = parsedDay,
+        fullDate = rawDate,
+        time = rawTime, // Waktu kini berhasil dimuat secara dinamis dari database Room!
         location = location,
         currentParticipants = currentParticipants,
         maxParticipants = maxParticipants,
         description = description,
-        categoryColor = Color(categoryColor)
+        categoryColorHex = colorHex
     )
 }
