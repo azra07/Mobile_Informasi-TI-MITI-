@@ -7,5 +7,5 @@ class Aspirations(
     val content: String = "",
     val category: String = "", // misal: Fasilitas, Akademik, Umum
     val timestamp: Long = System.currentTimeMillis(),
-    val isAnonymous: Boolean = false
+    val anonymous: Boolean = false
 )

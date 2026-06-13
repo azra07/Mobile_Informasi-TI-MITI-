@@ -8,6 +8,7 @@ interface AuthRepository {
         email: String,
         password: String
     ): Flow<Result<User>>
+
     fun register(
         name: String,
         email: String,
@@ -15,17 +16,21 @@ interface AuthRepository {
         role: String,
         nim: String
     ): Flow<Result<Unit>>
-    fun registerStudent(
+
+    // Menyimpan versi SUSPEND saja yang digunakan oleh AuthRepositoryImpl.kt
+    suspend fun registerStudent(
         name: String,
         email: String,
-        password: String,
+        pass: String,
         nim: String
-    ): Flow<Result<Unit>>
+    ): Result<Unit>
+
     suspend fun updateUserProfile(
         name: String,
         nim: String,
         email: String
     ): Result<Unit>
+
     fun getCurrentUser(): User?
     suspend fun getFullCurrentUser(): User?
     fun getStudentCount(): Flow<Int>

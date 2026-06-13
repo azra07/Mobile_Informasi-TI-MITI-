@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable // IMPORT REMEMBER SAVEABLE AGAR MENU POP-UP TIDAK HILANG SAAT ROTASI
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,13 +45,13 @@ fun StatCard(title: String, value: String, iconText: String, modifier: Modifier 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier.size(28.dp).background(MaterialTheme.colorScheme.onBackground, CircleShape),
+                modifier = Modifier.size(28.dp).background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(iconText, fontSize = 14.sp)
             }
             Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-            Text(title, fontSize = 9.sp, color = MaterialTheme.colorScheme.onBackground, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(title, fontSize = 9.sp, color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -61,7 +62,8 @@ fun AdminEventCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    var showMenu by remember { mutableStateOf(false) }
+    // MENGGUNAKAN REMEMBER SAVEABLE: Menjamin menu pop-up kecil tidak menutup sendiri saat layar diputar
+    var showMenu by rememberSaveable { mutableStateOf(false) }
 
     // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
     val categoryColor = try {
@@ -91,14 +93,14 @@ fun AdminEventCard(
                 DropdownMenu(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
-                    modifier = Modifier.background(MaterialTheme.colorScheme.onBackground)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.surface) // PERBAIKAN: Gunakan surface agar berwarna putih di Light Mode
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Edit Event", color = MaterialTheme.colorScheme.onBackground) },
+                        text = { Text("Edit Kegiatan", color = MaterialTheme.colorScheme.onSurface) }, // Teks dinamis kontras
                         onClick = { showMenu = false; onEdit() }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete Event", color = Color.Red) },
+                        text = { Text("Hapus Kegiatan", color = Color.Red) }, // Warna merah murni untuk hapus
                         onClick = { showMenu = false; onDelete() }
                     )
                 }
@@ -162,13 +164,13 @@ fun AdminEventCard(
                     Text(
                         text = "📅 $formattedDate",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "🕒 ${event.time}",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
                 }
 
@@ -180,13 +182,13 @@ fun AdminEventCard(
                     Text(
                         text = "👥 ${event.currentParticipants}/${event.maxParticipants}",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onBackground
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "📍 ${event.location}",
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

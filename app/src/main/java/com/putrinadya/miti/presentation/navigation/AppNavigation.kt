@@ -24,22 +24,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val mainViewModel: MainViewModel = hiltViewModel() // Ambil MainViewModel
+    val mainViewModel: MainViewModel = hiltViewModel() // Tetap di-import
     val scope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
         startDestination = Screen.Splash.route // 1. MULAI UTAMA DARI SPLASH SCREEN
     ) {
-        // 1. Splash Screen Route
+        // 1. Splash Screen Route (DIPAKSA MASUK ONBOARDING UNTUK PENGUJIAN)
         composable(Screen.Splash.route) {
             SplashScreen(
                 onSplashComplete = {
-                    scope.launch {
-                        val destination = mainViewModel.getStartDestination()
-                        navController.navigate(destination) {
-                            popUpTo(Screen.Splash.route) { inclusive = true }
-                        }
+                    // Memaksa navigasi langsung ke Onboarding setelah Splash selesai
+                    navController.navigate(Screen.Onboarding.route) {
+                        popUpTo(Screen.Splash.route) { inclusive = true }
                     }
                 }
             )
@@ -87,7 +85,7 @@ fun AppNavigation() {
             val adminViewModel: AdminDashboardViewModel = hiltViewModel()
             AdminDashboardPage(
                 viewModel = adminViewModel,
-                navController = navController // <--- Tambahkan parameter ini
+                navController = navController // Passed the navController here
             )
         }
 
@@ -98,6 +96,5 @@ fun AppNavigation() {
             val url = backStackEntry.arguments?.getString("url") ?: ""
             NewsDetailScreen(url = url, onBackClick = { navController.popBackStack() })
         }
-
     }
 }

@@ -128,7 +128,7 @@ class StudentDashboardViewModel @Inject constructor(
                 userName = user?.name ?: "Mahasiswa",
                 content = content,
                 category = category,
-                isAnonymous = isAnonymous
+                anonymous = isAnonymous
             )
             aspirationRepository.sendAspiration(aspiration).onSuccess {
                 showAspirationDialog = false

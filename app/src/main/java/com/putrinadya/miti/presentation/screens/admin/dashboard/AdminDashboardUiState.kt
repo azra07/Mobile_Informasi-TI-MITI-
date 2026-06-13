@@ -24,5 +24,6 @@ data class AdminDashboardUiState(
     val adminEmail: String = "",
     val adminNip: String = "",
     val adminTitle: String = "",
-    val adminDepartment: String = ""
+    val adminDepartment: String = "",
+    val adminPhotoUrl: String = ""
 )

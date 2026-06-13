@@ -1,26 +1,35 @@
 package com.putrinadya.miti.presentation.screens.profile
 
+import android.net.Uri // MENAMBAHKAN IMPORT URI
+import androidx.activity.compose.rememberLauncherForActivityResult // IMPORT GALLERY LAUNCHER
+import androidx.activity.result.contract.ActivityResultContracts // IMPORT LAUNCHER CONTRACT
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable // IMPORT REMEMBER SAVEABLE AGAR ANTI-ROTASI
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.putrinadya.miti.presentation.screens.admin.dashboard.AdminDashboardViewModel
 import com.putrinadya.miti.ui.theme.*
 import androidx.navigation.NavController
@@ -40,7 +49,10 @@ fun ProfileAdmin(
     var adminName by remember(uiState.adminName) { mutableStateOf(uiState.adminName) }
     var adminNip by remember(uiState.adminNip) { mutableStateOf(uiState.adminNip) }
     var adminEmail by remember(uiState.adminEmail) { mutableStateOf(uiState.adminEmail) }
-    var showEditDialog by remember { mutableStateOf(false) }
+    var adminPhotoUrl by remember(uiState.adminPhotoUrl) { mutableStateOf(uiState.adminPhotoUrl) }
+
+    // GANTI REMEMBER MENJADI REMEMBER SAVEABLE: Mencegah dialog menutup sendiri saat layar dirotasi
+    var showEditDialog by rememberSaveable { mutableStateOf(false) }
 
     val isDarkMode by mainViewModel.isDarkMode.collectAsState()
 
@@ -58,14 +70,14 @@ fun ProfileAdmin(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackClick) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = MitiWhite)
+                Icon(Icons.Default.ArrowBack, contentDescription = "Kembali", tint = MaterialTheme.colorScheme.onBackground)
             }
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "Profil Admin",
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = MitiWhite
+                color = MaterialTheme.colorScheme.onBackground
             )
         }
 
@@ -101,8 +113,18 @@ fun ProfileAdmin(
                                     .border(4.dp, MaterialTheme.colorScheme.surface, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                val initials = if (adminName.length >= 2) adminName.take(2).uppercase() else "AD"
-                                Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.background, fontSize = 22.sp)
+                                // Menampilkan foto profil dinamis baik dari galeri lokal maupun internet
+                                if (adminPhotoUrl.isNotBlank()) {
+                                    AsyncImage(
+                                        model = adminPhotoUrl,
+                                        contentDescription = "Foto Profil",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize().clip(CircleShape)
+                                    )
+                                } else {
+                                    val initials = if (adminName.length >= 2) adminName.take(2).uppercase() else "AD"
+                                    Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary, fontSize = 22.sp)
+                                }
                             }
 
                             OutlinedButton(
@@ -129,20 +151,18 @@ fun ProfileAdmin(
                                 .fillMaxWidth()
                                 .padding(start = 16.dp, end = 16.dp, bottom = 20.dp, top = 12.dp)
                         ) {
-                            Text(adminName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                            Text(adminName, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                             Spacer(modifier = Modifier.height(12.dp))
 
-                            // Seluruh data diambil secara dinamis dari database Firestore
-                            ProfileDetailRow(icon = "👤", label = "NIP / Staff ID: $adminNip")
-                            ProfileDetailRow(icon = "💼", label = uiState.adminTitle.ifEmpty { "Dosen" })
+                            ProfileDetailRow(icon = "👤", label = adminNip)
+                            ProfileDetailRow(icon = "💼", label = uiState.adminTitle.ifEmpty { "Admin Utama" })
                             ProfileDetailRow(icon = "✉️", label = adminEmail)
-                            ProfileDetailRow(icon = "🏛️", label = uiState.adminDepartment.ifEmpty { "Teknologi Informasi" })
                         }
                     }
                 }
             }
 
-            // Pengaturan Dark Mode & Bahasa
+            // Pengaturan Dark Mode
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
@@ -161,8 +181,8 @@ fun ProfileAdmin(
                                 Text("🌙", fontSize = 18.sp)
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
-                                    Text("Mode Gelap", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
-                                    Text(if (isDarkMode) "Aktif" else "Nonaktif", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
+                                    Text("Mode Gelap", fontSize = 14.sp, color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
+                                    Text(if (isDarkMode) "Aktif" else "Nonaktif", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
                                 }
                             }
                             Switch(
@@ -174,26 +194,6 @@ fun ProfileAdmin(
                                 )
                             )
                         }
-
-                        Divider(color = MaterialTheme.colorScheme.onBackground, thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("🌐", fontSize = 18.sp)
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Column {
-                                    Text("Bahasa", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
-                                    Text("Bahasa Indonesia", fontSize = 11.sp, color = MitiGray)
-                                }
-                            }
-                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Pergi", tint = MitiGray)
-                        }
                     }
                 }
             }
@@ -202,11 +202,20 @@ fun ProfileAdmin(
             item {
                 OutlinedButton(
                     onClick = {
-                        viewModel.logout() // 1. Keluar dari Firebase Auth
+                        try {
+                            viewModel.logout() // 1. Keluar dari Firebase Auth
 
-                        // 2. Navigasi Aman: Arahkan ke Login dan hapus rute Dashboard Admin dari riwayat
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(Screen.AdminDashboard.route) { inclusive = true }
+                            // 2. Navigasi Aman: Arahkan ke Login dan hapus rute Dashboard Admin dari riwayat
+                            navController.navigate(Screen.Login.route) {
+                                popUpTo(Screen.AdminDashboard.route) { inclusive = true }
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            try {
+                                navController.navigate(Screen.Login.route)
+                            } catch (navEx: Exception) {
+                                navEx.printStackTrace()
+                            }
                         }
                     },
                     modifier = Modifier
@@ -234,18 +243,23 @@ fun ProfileAdmin(
             currentName = adminName,
             currentNip = adminNip,
             currentEmail = adminEmail,
+            currentPhotoUrl = adminPhotoUrl,
             onClose = { showEditDialog = false },
-            onSave = { name, nip, email ->
+            onSave = { name, nip, email, photoUrl ->
                 adminName = name
                 adminNip = nip
                 adminEmail = email
+                adminPhotoUrl = photoUrl
+
+                // Simpan perubahan secara permanen ke database Firestore
+                viewModel.updateAdminProfile(name, nip, email, photoUrl)
                 showEditDialog = false
             }
         )
     }
 }
 
-// ================= COMPONENT PEMBANTU: DETAIL ROW (DIBUAT PRIVATE) =================
+// ================= COMPONENT PEMBANTU: DETAIL ROW =================
 @Composable
 private fun ProfileDetailRow(icon: String, label: String) {
     Row(
@@ -254,23 +268,41 @@ private fun ProfileDetailRow(icon: String, label: String) {
     ) {
         Text(icon, fontSize = 14.sp)
         Spacer(modifier = Modifier.width(8.dp))
-        Text(label, fontSize = 13.sp, color = MitiGray)
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+        )
     }
 }
 
-// ================= DIALOG: POP-UP EDIT PROFILE ADMIN =================
+// ================= DIALOG: POP-UP EDIT PROFILE ADMIN (ANTI-ROTASI & GALLERY PICKER) =================
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditAdminProfileDialog(
     currentName: String,
     currentNip: String,
     currentEmail: String,
+    currentPhotoUrl: String,
     onClose: () -> Unit,
-    onSave: (name: String, nip: String, email: String) -> Unit
+    onSave: (name: String, nip: String, email: String, photoUrl: String) -> Unit
 ) {
-    var nameInput by remember { mutableStateOf(currentName) }
-    var nipInput by remember { mutableStateOf(currentNip) }
-    var emailInput by remember { mutableStateOf(currentEmail) }
+    // MENGGUNAKAN REMEMBER SAVEABLE: Menjamin data input tidak hilang saat layar diputar/dirotasi
+    var nameInput by rememberSaveable { mutableStateOf(currentName) }
+    var nipInput by rememberSaveable { mutableStateOf(currentNip) }
+    var emailInput by rememberSaveable { mutableStateOf(currentEmail) }
+    var photoUrlInput by rememberSaveable { mutableStateOf(currentPhotoUrl) }
+
+    val scrollState = rememberScrollState() // State scroll internal form dialog
+
+    // launcher untuk mengakses Galeri Foto HP asli
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        if (uri != null) {
+            photoUrlInput = uri.toString() // Menyimpan alamat URI foto lokal dari galeri HP
+        }
+    }
 
     Dialog(
         onDismissRequest = onClose,
@@ -287,7 +319,8 @@ fun EditAdminProfileDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(20.dp)
+                    .verticalScroll(scrollState), // Mengaktifkan scroll agar form muat di posisi layar landscape
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -296,51 +329,78 @@ fun EditAdminProfileDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Edit Profil", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                    Text(
+                        text = "Edit Profil",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(MitiWhite.copy(alpha = 0.1f), CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape)
                             .clickable { onClose() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MitiWhite, modifier = Modifier.size(16.dp))
+                        Icon(
+                            Icons.Default.Close,
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = "Tutup",
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
                 }
 
-                Box(contentAlignment = Alignment.BottomEnd) {
+                // AVATAR DENGAN TOMBOL GALLERY PICKER (+)
+                Box(
+                    contentAlignment = Alignment.BottomEnd,
+                    modifier = Modifier.clickable { galleryLauncher.launch("image/*") } // Klik lingkaran untuk buka galeri HP
+                ) {
                     Box(
                         modifier = Modifier
                             .size(90.dp)
                             .background(MaterialTheme.colorScheme.primary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Menggunakan inisial nama edit dinamis (contoh: "amang" -> "AM")
-                        val initials = if (nameInput.length >= 2) nameInput.take(2).uppercase() else "AD"
-                        Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.background, fontSize = 26.sp)
+                        if (photoUrlInput.isNotBlank()) {
+                            AsyncImage(
+                                model = photoUrlInput,
+                                contentDescription = "Foto Profil",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize().clip(CircleShape)
+                            )
+                        } else {
+                            val initials = if (nameInput.length >= 2) nameInput.take(2).uppercase() else "AD"
+                            Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onPrimary, fontSize = 26.sp)
+                        }
                     }
                     Box(
                         modifier = Modifier
                             .size(28.dp)
                             .background(MaterialTheme.colorScheme.primary, CircleShape)
-                            .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
+                            .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
+                            .clickable { galleryLauncher.launch("image/*") }, // Klik tombol + untuk buka galeri HP
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Ubah Foto", tint = MaterialTheme.colorScheme.background, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Add, contentDescription = "Ubah Foto", tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(16.dp))
                     }
                 }
-                Text("Ketuk untuk mengubah foto", fontSize = 12.sp, color = MitiGray)
+                Text(
+                    text = "Ketuk untuk mengubah foto",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Nama Lengkap", color = MitiWhite, fontSize = 12.sp)
+                    Text("Nama Lengkap", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nameInput,
                         onValueChange = { nameInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedContainerColor = MaterialTheme.colorScheme.background,
                             unfocusedContainerColor = MaterialTheme.colorScheme.background,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -350,15 +410,15 @@ fun EditAdminProfileDialog(
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("NIP / Staff ID", color = MitiWhite, fontSize = 12.sp)
+                    Text("NIP / Staff ID", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = nipInput,
                         onValueChange = { nipInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedContainerColor = MaterialTheme.colorScheme.background,
                             unfocusedContainerColor = MaterialTheme.colorScheme.background,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -368,15 +428,15 @@ fun EditAdminProfileDialog(
                 }
 
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Alamat Email", color = MitiWhite, fontSize = 12.sp)
+                    Text("Alamat Email", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = emailInput,
                         onValueChange = { emailInput = it },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
                             focusedContainerColor = MaterialTheme.colorScheme.background,
                             unfocusedContainerColor = MaterialTheme.colorScheme.background,
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
@@ -394,22 +454,22 @@ fun EditAdminProfileDialog(
                     Button(
                         onClick = onClose,
                         modifier = Modifier.weight(1f).height(45.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF142233)),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)),
                         shape = RoundedCornerShape(22.dp)
                     ) {
-                        Text("Batal", color = MitiWhite, fontWeight = FontWeight.Bold)
+                        Text("Batal", color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
-                        onClick = { onSave(nameInput, nipInput, emailInput) },
+                        onClick = { onSave(nameInput, nipInput, emailInput, photoUrlInput) },
                         modifier = Modifier.weight(1.3f).height(45.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(22.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.background, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Check, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Simpan Perubahan", color = MaterialTheme.colorScheme.background, fontWeight = FontWeight.Bold)
+                            Text("Simpan", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

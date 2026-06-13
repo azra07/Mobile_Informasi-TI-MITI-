@@ -17,13 +17,14 @@ import com.putrinadya.miti.domain.usecase.admin.UpdateEventUseCase
 import com.putrinadya.miti.domain.usecase.event.GetEventsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
 class AdminDashboardViewModel @Inject constructor(
     private val repository: EventRepository,
     private val authRepository: AuthRepository,
-    private val aspirationRepository: AspirationRepository, // 1. TAMBAHKAN INI
+    private val aspirationRepository: AspirationRepository,
     private val getEventsUseCase: GetEventsUseCase,
     private val addEventUseCase: AddEventUseCase,
     private val deleteEventUseCase: DeleteEventUseCase,
@@ -45,44 +46,66 @@ class AdminDashboardViewModel @Inject constructor(
     }
 
     private fun observeEvents() {
-        // Mendengarkan total partisipan aktif secara real-time
+        // Mendengarkan total partisipan aktif secara real-time dengan proteksi try-catch
         viewModelScope.launch {
-            repository.getTotalParticipants().collect { participantCount ->
-                uiState = uiState.copy(activeParticipants = participantCount)
+            try {
+                repository.getTotalParticipants().collect { participantCount ->
+                    uiState = uiState.copy(activeParticipants = participantCount)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
-        // Mendengarkan daftar event secara real-time (Otomatis memperbarui daftar & statistik total event)
+        // Mendengarkan daftar event secara real-time
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
-            getEventsUseCase().collect { fetchedEvents ->
-                eventsList.clear()
-                eventsList.addAll(fetchedEvents)
-                uiState = uiState.copy(
-                    isLoading = false,
-                    totalEvents = eventsList.size
-                )
+            try {
+                uiState = uiState.copy(isLoading = true)
+                getEventsUseCase().collect { fetchedEvents ->
+                    eventsList.clear()
+                    eventsList.addAll(fetchedEvents)
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        totalEvents = eventsList.size
+                    )
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                uiState = uiState.copy(isLoading = false)
             }
         }
     }
 
+    // Mendengarkan jumlah mahasiswa terdaftar secara real-time dari Firestore
     private fun observeStudentCount() {
         viewModelScope.launch {
-            authRepository.getStudentCount().collect { count ->
-                uiState = uiState.copy(totalStudents = count)
+            try {
+                authRepository.getStudentCount().collect { count ->
+                    uiState = uiState.copy(totalStudents = count)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
 
     private fun observeAspirations() {
         viewModelScope.launch {
-            aspirationRepository.getAspirationCount().collect { count ->
-                uiState = uiState.copy(newAspirations = count)
+            try {
+                aspirationRepository.getAspirationCount().collect { count ->
+                    uiState = uiState.copy(newAspirations = count)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
         viewModelScope.launch {
-            aspirationRepository.getAllAspirations().collect { list ->
-                uiState = uiState.copy(aspirationsList = list)
+            try {
+                aspirationRepository.getAllAspirations().collect { list ->
+                    uiState = uiState.copy(aspirationsList = list)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
@@ -102,20 +125,34 @@ class AdminDashboardViewModel @Inject constructor(
         }
     }
 
-    fun registerNewStudent(name: String, email: String, pass: String, nim: String) {
-        viewModelScope.launch {
-            uiState = uiState.copy(isRegistering = true)
-            authRepository.registerStudent(name, email, pass, nim).collect { result ->
-                uiState = uiState.copy(
-                    isRegistering = false,
-                    showRegisterUserDialog = !result.isSuccess // Tutup jika sukses
-                )
-            }
-        }
-    }
-
     fun onShowRegisterDialog(show: Boolean) {
         uiState = uiState.copy(showRegisterUserDialog = show)
+    }
+
+    // Fungsi pendaftaran mahasiswa baru yang bersih dan aman menggunakan operator invoke (.onSuccess)
+    fun registerNewStudent(name: String, email: String, pass: String, nim: String) {
+        if (name.isBlank() || email.isBlank() || pass.isBlank() || nim.isBlank()) {
+            uiState = uiState.copy(error = "Mohon Isi Semua Kolom")
+            return
+        }
+
+        viewModelScope.launch {
+            uiState = uiState.copy(isRegistering = true, error = null)
+            authRepository.registerStudent(name, email, pass, nim)
+                .onSuccess {
+                    uiState = uiState.copy(
+                        isRegistering = false,
+                        showRegisterUserDialog = false // Tutup dialog setelah sukses
+                    )
+                    // Statistik total mahasiswa akan otomatis terupdate via observeStudentCount() secara real-time
+                }
+                .onFailure { exception ->
+                    uiState = uiState.copy(
+                        isRegistering = false,
+                        error = exception.message ?: "Gagal mendaftarkan mahasiswa"
+                    )
+                }
+        }
     }
 
     fun createNewEvent(event: Event) {
@@ -205,5 +242,37 @@ class AdminDashboardViewModel @Inject constructor(
 
     fun logout() {
         authRepository.logout()
+    }
+
+    fun updateAdminProfile(name: String, nip: String, email: String, photoUrl: String) {
+        viewModelScope.launch {
+            try {
+                // Ambil UID admin yang sedang login
+                val uid = authRepository.getFullCurrentUser()?.uid ?: return@launch
+                val updates = hashMapOf(
+                    "name" to name,
+                    "nip" to nip,
+                    "email" to email,
+                    "photoUrl" to photoUrl // Simpan link foto baru ke Firestore
+                )
+
+                // Update dokumen di Firestore
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .update(updates as Map<String, Any>)
+                    .await()
+
+                // Perbarui uiState lokal agar layar dashboard langsung terupdate secara real-time
+                uiState = uiState.copy(
+                    adminName = name,
+                    adminEmail = email,
+                    adminNip = nip,
+                    adminPhotoUrl = photoUrl
+                )
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }

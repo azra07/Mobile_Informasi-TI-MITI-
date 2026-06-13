@@ -17,20 +17,24 @@ private val DarkColorScheme = darkColorScheme(
     surface = MitiCard,
     onPrimary = Color.Black,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
+    onSurfaceVariant = MitiGray // Memetakan warna sekunder ke MitiGray secara otomatis di Mode Gelap
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = Color(0xFF00838F),
     background = Color.White,
     surface = Color(0xFFF5F5F5),
-    onPrimary = Color.White
+    onPrimary = Color.White,
+    onBackground = Color.Black, // Memastikan teks berwarna Hitam di atas background Putih
+    onSurface = Color.Black,     // Memastikan teks berwarna Hitam di atas card/surface Putih
+    onSurfaceVariant = Color.Gray
 )
 
 @Composable
 fun MITITheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // UBAH KE FALSE agar warna brand MITI Anda tidak tertimpa warna wallpaper HP
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

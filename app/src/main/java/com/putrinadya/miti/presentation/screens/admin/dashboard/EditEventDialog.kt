@@ -43,7 +43,7 @@ fun EditEventDialog(
     var eventType by remember { mutableStateOf(event.category) }
     var capacity by remember { mutableStateOf(event.maxParticipants.toString()) }
 
-    var dropdownExpanded by remember { mutableStateOf(false) } // State kontrol buka/tutup dropdown
+    var dropdownExpanded by remember { mutableStateOf(false) } // State kontrol dropdown jenis event
     val eventTypesList = listOf("Workshop", "Hackathon", "Seminar", "Webinar", "Competition", "Fun Match")
 
     val context = LocalContext.current
@@ -72,14 +72,14 @@ fun EditEventDialog(
                 .fillMaxWidth()
                 .padding(24.dp)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Latar belakang abu terang di Light Mode
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
-                    .verticalScroll(scrollState),
+                    .verticalScroll(scrollState), // Form dapat di-scroll jika layar HP kecil
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 // Header Dialog
@@ -88,33 +88,33 @@ fun EditEventDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Edit Kegiatan", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text("Edit Kegiatan", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), CircleShape)
+                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), CircleShape)
                             .clickable { onClose() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MaterialTheme.colorScheme.onSurface, modifier = Modifier.size(16.dp))
                     }
                 }
 
                 // 1. Judul Kegiatan
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Judul Kegiatan", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                    Text("Judul Kegiatan", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = eventTitle,
                         onValueChange = { eventTitle = it },
-                        placeholder = { Text("Contoh: Workshop Desain UI/UX", color = MaterialTheme.colorScheme.onBackground) },
+                        placeholder = { Text("Contoh: Workshop Desain UI/UX", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.background, // Putih bersih di Light Mode, Navy di Dark Mode
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary, // Garis tepi biru cyan saat fokus
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -122,11 +122,11 @@ fun EditEventDialog(
 
                 // 2. Deskripsi
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Deskripsi", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                    Text("Deskripsi", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        placeholder = { Text("Jelaskan detail acara..", color = MaterialTheme.colorScheme.onBackground) },
+                        placeholder = { Text("Jelaskan detail acara..", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -134,11 +134,11 @@ fun EditEventDialog(
                         shape = RoundedCornerShape(12.dp),
                         maxLines = 4,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -149,9 +149,9 @@ fun EditEventDialog(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    // Tanggal dengan Interaksi Kalender Visual (DatePicker)
+                    // Tanggal dengan Kalender Visual (DatePicker)
                     Column(modifier = Modifier.weight(1.1f)) {
-                        Text("Tanggal", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        Text("Tanggal", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -162,22 +162,22 @@ fun EditEventDialog(
                                 onValueChange = {},
                                 readOnly = true,
                                 enabled = false,
-                                placeholder = { Text("Pilih Tanggal", color = MaterialTheme.colorScheme.onBackground) },
+                                placeholder = { Text("Pilih Tanggal", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                                 trailingIcon = {
                                     Icon(
                                         Icons.Default.DateRange,
                                         contentDescription = "Kalender",
-                                        tint = MaterialTheme.colorScheme.onBackground,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.clickable { datePickerDialog.show() }
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    disabledTextColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledBorderColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onBackground
+                                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                    disabledContainerColor = MaterialTheme.colorScheme.background,
+                                    disabledBorderColor = MaterialTheme.colorScheme.primary,
+                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                 )
                             )
                         }
@@ -185,19 +185,19 @@ fun EditEventDialog(
 
                     // Waktu
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Waktu", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        Text("Waktu", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                         OutlinedTextField(
                             value = timeString,
                             onValueChange = { timeString = it },
-                            placeholder = { Text("Contoh: 11:00 WITA", color = MaterialTheme.colorScheme.onBackground) },
+                            placeholder = { Text("Contoh: 11:00 WITA", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                                focusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                                focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedContainerColor = MaterialTheme.colorScheme.background,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = Color.Transparent
                             )
                         )
@@ -206,20 +206,20 @@ fun EditEventDialog(
 
                 // 4. Lokasi
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Lokasi", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                    Text("Lokasi", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                     OutlinedTextField(
                         value = location,
                         onValueChange = { location = it },
-                        placeholder = { Text("Contoh: Aula TI, Gedung B", color = MaterialTheme.colorScheme.onBackground) },
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Lokasi", tint = MaterialTheme.colorScheme.onBackground) },
+                        placeholder = { Text("Contoh: Aula TI, Gedung B", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Lokasi", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -232,32 +232,32 @@ fun EditEventDialog(
                 ) {
                     // Jenis Kegiatan dengan Dropdown Menu (Tanpa ketik manual)
                     Column(modifier = Modifier.weight(1.2f)) {
-                        Text("Jenis Kegiatan", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        Text("Jenis Kegiatan", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { dropdownExpanded = true } // Klik box untuk memicu Dropdown Menu
+                                .clickable { dropdownExpanded = true }
                         ) {
                             OutlinedTextField(
                                 value = eventType,
                                 onValueChange = {},
-                                readOnly = true, // Mengunci input agar tidak memicu keyboard virtual
+                                readOnly = true,
                                 enabled = false,
                                 trailingIcon = {
                                     Icon(
                                         Icons.Default.KeyboardArrowDown,
                                         contentDescription = "Dropdown",
-                                        tint = MaterialTheme.colorScheme.onBackground,
+                                        tint = MaterialTheme.colorScheme.primary,
                                         modifier = Modifier.clickable { dropdownExpanded = true }
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    disabledTextColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledBorderColor = MaterialTheme.colorScheme.onBackground,
-                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onBackground
+                                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                                    disabledContainerColor = MaterialTheme.colorScheme.background,
+                                    disabledBorderColor = MaterialTheme.colorScheme.primary,
+                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                                 )
                             )
 
@@ -265,14 +265,14 @@ fun EditEventDialog(
                             DropdownMenu(
                                 expanded = dropdownExpanded,
                                 onDismissRequest = { dropdownExpanded = false },
-                                modifier = Modifier.fillMaxWidth(0.5f).background(MaterialTheme.colorScheme.onBackground)
+                                modifier = Modifier.fillMaxWidth(0.5f).background(MaterialTheme.colorScheme.surface) // Perbaiki warna latar belakang dropdown
                             ) {
                                 eventTypesList.forEach { type ->
                                     DropdownMenuItem(
-                                        text = { Text(type, color = MaterialTheme.colorScheme.onBackground) },
+                                        text = { Text(type, color = MaterialTheme.colorScheme.onSurface) }, // Teks dinamis kontras
                                         onClick = {
-                                            eventType = type // Ubah jenis kegiatan sesuai yang dipilih
-                                            dropdownExpanded = false // Tutup menu dropdown
+                                            eventType = type
+                                            dropdownExpanded = false
                                         }
                                     )
                                 }
@@ -282,18 +282,18 @@ fun EditEventDialog(
 
                     // Kapasitas
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Kapasitas", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        Text("Kapasitas", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp)
                         OutlinedTextField(
                             value = capacity,
                             onValueChange = { capacity = it },
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
-                                focusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
-                                focusedBorderColor = MaterialTheme.colorScheme.onBackground,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                focusedContainerColor = MaterialTheme.colorScheme.background,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
                                 unfocusedBorderColor = Color.Transparent
                             )
                         )
@@ -302,7 +302,7 @@ fun EditEventDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Tombol Simpan Perubahan
+                // Tombol Simpan Perubahan (PERBAIKAN WARNA KONTRAST UTAMA)
                 Button(
                     onClick = {
                         val dateParts = dateString.split("/")
@@ -327,7 +327,6 @@ fun EditEventDialog(
                             else -> "#9E9E9E"             // MitiGray
                         }
 
-                        // Menggabungkan seluruh data baru yang telah diedit
                         val updatedEvent = event.copy(
                             title = eventTitle,
                             category = eventType,
@@ -345,10 +344,10 @@ fun EditEventDialog(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), // Latar belakang Cyan
                     shape = RoundedCornerShape(25.dp)
                 ) {
-                    Text("Simpan Perubahan", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
+                    Text("Simpan Perubahan", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold) // Teks Hitam Kontras
                 }
             }
         }

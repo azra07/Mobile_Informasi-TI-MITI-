@@ -1,5 +1,7 @@
 package com.putrinadya.miti.data.repository
 
+import android.content.Context // MENAMBAHKAN IMPORT CONTEXT
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.FirebaseApp
@@ -19,16 +21,15 @@ import javax.inject.Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    @ApplicationContext private val context: android.content.Context
+    @ApplicationContext private val context: Context
 ) : AuthRepository {
 
     override fun login(email: String, password: String): Flow<Result<User>> = callbackFlow {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val uid = result.user?.uid ?: ""
-                android.util.Log.d("MITI_DEBUG", "UID asli dari Auth adalah: $uid")
+                Log.d("MITI_DEBUG", "UID asli dari Auth adalah: $uid")
 
-                firestore.collection("users").document(uid).get()
                 firestore.collection("users").document(uid).get()
                     .addOnSuccessListener { document ->
                         if (document.exists()) {
@@ -36,12 +37,12 @@ class AuthRepositoryImpl @Inject constructor(
                                 uid = uid,
                                 name = document.getString("name") ?: "",
                                 email = document.getString("email") ?: "",
-                                role = document.getString("role") ?: "student",
+                                role = document.getString("role") ?: "mahasiswa",
                                 nim = document.getString("nim") ?: ""
                             )
                             trySend(Result.success(user))
                         } else {
-                             trySend(Result.failure(Exception("Data pengguna tidak ditemukan di database.")))
+                            trySend(Result.failure(Exception("Data pengguna tidak ditemukan di database.")))
                         }
                         close()
                     }
@@ -67,56 +68,17 @@ class AuthRepositoryImpl @Inject constructor(
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val uid = result.user?.uid ?: ""
-                android.util.Log.d("MITI_DEBUG", "UID asli dari Auth adalah: $uid")
-                firestore.collection("users").document(uid).get()
+                Log.d("MITI_DEBUG", "UID asli dari Auth adalah: $uid")
+
                 val userData = hashMapOf(
                     "uid" to uid,
                     "name" to name,
                     "email" to email,
                     "role" to role,
-                    "nim" to if (role == "student") nim  else ""
+                    "nim" to if (role == "mahasiswa") nim else ""
                 )
-                firestore.collection("users").document(uid).set(userData)
-                    .addOnSuccessListener { trySend(Result.success(Unit)) }
-                    .addOnFailureListener { trySend(Result.failure(it)) }
-            }
-            .addOnFailureListener { trySend(Result.failure(it)) }
-        awaitClose()
-    }
-
-    override fun registerStudent(
-        name: String,
-        email: String,
-        password: String,
-        nim: String
-    ): Flow<Result<Unit>> = callbackFlow {
-        val secondaryAppName = "SecondaryApp"
-        val options = FirebaseApp.getInstance().options
-        val secondaryApp = try {
-            FirebaseApp.initializeApp(context, options, secondaryAppName)
-        } catch (e: Exception) {
-            FirebaseApp.getInstance(secondaryAppName)
-        }
-
-        val secondaryAuth = Firebase.auth(secondaryApp)
-
-        secondaryAuth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { result ->
-                val uid = result.user?.uid ?: ""
-                val userData = hashMapOf(
-                    "uid" to uid,
-                    "name" to name,
-                    "email" to email,
-                    "role" to "student",
-                    "nim" to nim
-                )
-
-                // 3. Simpan Detail ke Firestore
                 firestore.collection("users").document(uid).set(userData)
                     .addOnSuccessListener {
-                        // 4. Logout dari secondary app & hapus instance
-                        secondaryAuth.signOut()
-                        secondaryApp.delete()
                         trySend(Result.success(Unit))
                         close()
                     }
@@ -130,6 +92,48 @@ class AuthRepositoryImpl @Inject constructor(
                 close()
             }
         awaitClose()
+    }
+
+    // Mengubah fungsi registerStudent menjadi suspend yang sangat bersih dan aman
+    override suspend fun registerStudent(
+        name: String,
+        email: String,
+        pass: String,
+        nim: String
+    ): Result<Unit> = try {
+        val secondaryAppName = "MitiSecondaryApp"
+        val options = auth.app.options
+
+        // Inisialisasi Firebase sekunder sementara agar tidak memutus sesi login Admin
+        val secondaryApp = try {
+            FirebaseApp.getInstance(secondaryAppName)
+        } catch (e: Exception) {
+            FirebaseApp.initializeApp(context, options, secondaryAppName)
+        }
+
+        val secondaryAuth = Firebase.auth(secondaryApp)
+
+        // 1. Buat User di Firebase Auth menggunakan instance sekunder
+        val authResult = secondaryAuth.createUserWithEmailAndPassword(email, pass).await()
+        val uid = authResult.user?.uid ?: throw Exception("Gagal mendapatkan UID")
+
+        // 2. Simpan Detail ke Firestore dengan role "mahasiswa"
+        val userData = hashMapOf(
+            "uid" to uid,
+            "name" to name,
+            "email" to email,
+            "role" to "mahasiswa", // Set otomatis sebagai mahasiswa
+            "nim" to nim
+        )
+        firestore.collection("users").document(uid).set(userData).await()
+
+        // 3. Logout dari secondary app & hapus instancenya agar bersih
+        secondaryAuth.signOut()
+        secondaryApp.delete()
+
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     override suspend fun updateUserProfile(name: String, nim: String, email: String): Result<Unit> = try {
@@ -148,8 +152,7 @@ class AuthRepositoryImpl @Inject constructor(
     override fun getCurrentUser(): User? {
         val firebaseUser = auth.currentUser
         return if (firebaseUser != null) {
-            // Ini versi simpel, idealnya data ini diambil dari cache atau Firestore
-            User(firebaseUser.uid, firebaseUser.displayName ?: "", firebaseUser.email ?: "", "student")
+            User(firebaseUser.uid, firebaseUser.displayName ?: "", firebaseUser.email ?: "", "mahasiswa")
         } else null
     }
 
@@ -161,11 +164,11 @@ class AuthRepositoryImpl @Inject constructor(
                 uid = firebaseUser.uid,
                 name = document.getString("name") ?: "",
                 email = document.getString("email") ?: "",
-                role = document.getString("role") ?: "student",
+                role = document.getString("role") ?: "mahasiswa",
                 nim = document.getString("nim") ?: "",
-                nip = document.getString("nip") ?: "",          // TAMBAHKAN INI
-                title = document.getString("title") ?: "",      // TAMBAHKAN INI
-                department = document.getString("department") ?: "" // TAMBAHKAN INI
+                nip = document.getString("nip") ?: "",
+                title = document.getString("title") ?: "",
+                department = document.getString("department") ?: ""
             )
         } catch (e: Exception) {
             null
@@ -173,8 +176,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getStudentCount(): Flow<Int> = callbackFlow {
+        // Menghitung mahasiswa secara dinamis berdasarkan role "mahasiswa" secara real-time
         val subscription = firestore.collection("users")
-            .whereEqualTo("role", "student")
+            .whereEqualTo("role", "mahasiswa")
             .addSnapshotListener { snapshot, _ ->
                 if (snapshot != null) {
                     trySend(snapshot.size())

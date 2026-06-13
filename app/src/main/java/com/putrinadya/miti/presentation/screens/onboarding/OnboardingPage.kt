@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,6 +59,7 @@ fun OnboardingPage(
         stringResource(R.string.onboarding_desc_3)
     )
 
+    // Mengembalikan Ikon Asli Anda 100%
     val icons = listOf(
         Icons.Default.Notifications,
         Icons.Default.BusinessCenter,
@@ -78,60 +78,61 @@ fun OnboardingPage(
     ) {
         Spacer(modifier = Modifier.height(24.dp))
 
+        // MEMASUKKAN KONTEN COLUMN KE DALAM PAGER AGAR DINAMIS SAAT DI-SWIPE & PRESISI DI TENGAH
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.weight(1f).fillMaxWidth()
         ) { pageIndex ->
-            val pageItem = viewModel.onboardPages[pageIndex]
-        }
-
-        Column(
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(160.dp)
-                    .clip(RoundedCornerShape(32.dp))
-                    .background(iconBackgrounds[uiState.currentPage]),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center // Memusatkan konten tepat di tengah layar secara vertikal
             ) {
-                Icon(
-                    imageVector = icons[uiState.currentPage],
-                    contentDescription = "Slide Icon",
-                    tint = MitiWhite,
-                    modifier = Modifier.size(64.dp)
+                Box(
+                    modifier = Modifier
+                        .size(160.dp)
+                        .clip(RoundedCornerShape(32.dp))
+                        .background(iconBackgrounds[pageIndex]),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icons[pageIndex],
+                        contentDescription = "Slide Icon",
+                        tint = MitiWhite,
+                        modifier = Modifier.size(64.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Text(
+                    text = titles[pageIndex],
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground, // Dinamis: Berubah Hitam di Light Mode
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = descriptions[pageIndex],
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f), // Dinamis: Berubah kontras di Light Mode
+                    textAlign = TextAlign.Center,
+                    lineHeight = 22.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
-
-            Spacer(modifier = Modifier.height(48.dp))
-
-            Text(
-                text = titles[uiState.currentPage],
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = MitiWhite,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = descriptions[uiState.currentPage],
-                fontSize = 15.sp,
-                color = MitiGray,
-                textAlign = TextAlign.Center,
-                lineHeight = 22.sp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
         }
 
+        // BAGIAN BAWAH: Indikator & Tombol Navigasi
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
+            // Indikator Titik Tiga
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -150,12 +151,13 @@ fun OnboardingPage(
                 }
             }
 
+            // Tombol Navigasi
             Row(
                 modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (uiState.currentPage < viewModel.totalPages - 1) {
+                if (pagerState.currentPage < viewModel.totalPages - 1) {
                     Text(
                         text = stringResource(R.string.btn_skip),
                         fontSize = 15.sp,
@@ -170,11 +172,20 @@ fun OnboardingPage(
                 }
 
                 Button(
-                    onClick = { viewModel.onNextPage() },
+                    onClick = {
+                        if (pagerState.currentPage == viewModel.totalPages - 1) {
+                            viewModel.onSkip() // Menyimpan status selesai ke local storage
+                            onOnboardingComplete() // PERBAIKAN: Menjamin navigasi langsung berfungsi ke halaman Login
+                        } else {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        }
+                    },
                     modifier = Modifier
                         .weight(1f, fill = false)
                         .height(48.dp)
-                        .width(if (uiState.currentPage == viewModel.totalPages - 1) 180.dp else 140.dp),
+                        .width(if (pagerState.currentPage == viewModel.totalPages - 1) 180.dp else 140.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MitiSecondary),
                     shape = RoundedCornerShape(24.dp)
                 ) {
@@ -183,7 +194,7 @@ fun OnboardingPage(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = if (uiState.currentPage == viewModel.totalPages - 1) {
+                            text = if (pagerState.currentPage == viewModel.totalPages - 1) {
                                 stringResource(R.string.btn_start)
                             } else {
                                 stringResource(R.string.btn_next)

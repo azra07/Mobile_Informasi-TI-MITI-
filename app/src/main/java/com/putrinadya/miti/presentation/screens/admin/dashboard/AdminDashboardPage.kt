@@ -1,5 +1,6 @@
 package com.putrinadya.miti.presentation.screens.admin.dashboard
 
+import androidx.compose.foundation.Image // Import untuk memuat gambar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -14,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource // Import untuk memanggil drawable resource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,13 +27,12 @@ import androidx.navigation.NavController
 @Composable
 fun AdminDashboardPage(
     viewModel: AdminDashboardViewModel,
-    navController: NavController // <--- 2. Terima parameter ini di sini
+    navController: NavController
 ) {
     val uiState = viewModel.uiState
     var showDeleteAllConfirm by remember { mutableStateOf(false) }
 
     if (uiState.currentSubScreen == "profile") {
-        // Mengirimkan instance viewModel agar halaman ProfileAdmin memuat data NIP, Nama, dll secara dinamis
         ProfileAdmin(
             viewModel = viewModel,
             navController = navController,
@@ -42,22 +43,22 @@ fun AdminDashboardPage(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { viewModel.onShowCreateEventDialog(true) },
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.primary,
                     shape = CircleShape
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Event", tint = MaterialTheme.colorScheme.onBackground)
+                    Icon(Icons.Default.Add, contentDescription = "Tambah Kegiatan", tint = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                    .background(MaterialTheme.colorScheme.background) // MitiNavy
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Header Admin
+                // Header Admin (GANTI TULISAN DENGAN GAMBAR LOGO & ADJUST SAPAAN)
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -65,99 +66,161 @@ fun AdminDashboardPage(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(stringResource(id = R.string.app_name), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                            // 1. Memanggil Gambar logo.jpeg dari drawable pengganti teks MITI
+                            Image(
+                                painter = painterResource(id = R.drawable.logo),
+                                contentDescription = "Logo MITI",
+                                modifier = Modifier
+                                    .height(35.dp)
+                                    .padding(bottom = 4.dp)
+                            )
+
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(8.dp).background(Color.Green, CircleShape))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Admin Mode", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground)
+                                Text(
+                                    text = "Mode Admin", // Bahasa Indonesia
+                                    fontSize = 12.sp,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                                )
                             }
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "Selamat datang!", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
-                            // MEMBACA NAMA ADMIN SECARA DINAMIS DARI FIRESTORE DATABASE
-                            Text("${uiState.adminName}!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                            Spacer(modifier = Modifier.height(14.dp))
+
+                            // 2. Sapaan Selamat datang dan Nama Admin diletakkan sejajar sebaris
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Selamat datang, ",
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                                )
+                                Text(
+                                    text = "${uiState.adminName}!",
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
                         }
 
-                        // Avatar DSC (Menampilkan Inisial Nama Admin Secara Dinamis)
+                        // Avatar DSC (Inisial Nama Admin)
                         Box(
                             modifier = Modifier
                                 .size(45.dp)
-                                .background(MaterialTheme.colorScheme.onBackground, shape = CircleShape)
+                                .background(MaterialTheme.colorScheme.primary, shape = CircleShape)
                                 .clickable { viewModel.onNavigateToSubScreen("profile") },
                             contentAlignment = Alignment.Center
                         ) {
                             val initials = if (uiState.adminName.length >= 2) uiState.adminName.take(2).uppercase() else "AD"
-                            Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp)
+                            Text(
+                                text = initials,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = 15.sp
+                            )
                         }
                     }
                 }
 
-                // Statistik Row
+                // Statistik Row (MENYISAKAN 3 KARTU STATISTIK SEIMBANG)
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        StatCard(title = "Total Events", value = uiState.totalEvents.toString(), iconText = "📅", modifier = Modifier.weight(1f))
-                        StatCard(title = "Active Participants", value = uiState.activeParticipants.toString(), iconText = "👥", modifier = Modifier.weight(1.1f))
-                        StatCard(title = "New Aspirations", value = uiState.newAspirations.toString(), iconText = "💡", modifier = Modifier.weight(1f))
+                        StatCard(title = "Total Kegiatan", value = uiState.totalEvents.toString(), iconText = "📅", modifier = Modifier.weight(1f))
+                        StatCard(title = "Aspirasi", value = uiState.newAspirations.toString(), iconText = "💡", modifier = Modifier.weight(1f))
                         StatCard(
-                            title = "Total Students",
+                            title = "Total Mahasiswa",
                             value = uiState.totalStudents.toString(),
                             iconText = "🎓",
-                            modifier = Modifier.weight(1f).clickable {
-                                viewModel.onShowRegisterDialog(true) // Klik untuk daftar user baru
-                            }
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    viewModel.onShowRegisterDialog(true)
+                                }
                         )
                     }
                 }
 
+                // Header Daftar Aspirasi
                 item {
-                    Text("Daftar Aspirasi Mahasiswa", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                    Text(
+                        text = "Daftar Aspirasi Mahasiswa",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
                 }
 
+                // Daftar Aspirasi
                 items(uiState.aspirationsList) { aspirasi ->
                     Card(
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
-                            Text(text = aspirasi.category, color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
-                            Text(text = aspirasi.content, color = MaterialTheme.colorScheme.onBackground)
                             Text(
-                                text = if(aspirasi.isAnonymous) "Dari: Anonim" else "Dari: ${aspirasi.userName}",
-                                color = MaterialTheme.colorScheme.onBackground,
+                                text = aspirasi.category,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = aspirasi.content,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                fontSize = 14.sp
+                            )
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                text = if (aspirasi.anonymous) "Dari: Anonim" else "Dari: ${aspirasi.userName}",
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                                 fontSize = 10.sp
                             )
                         }
                     }
                 }
 
-                // Manage Events Header
+                // Manage Events Header (KINI "Kelola Kegiatan" BAHASA INDONESIA)
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Manage Events", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
-                        Box(
-                            modifier = Modifier
-                                .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(12.dp))
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
-                        ) {
-                            Text("${viewModel.eventsList.size} events", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
-                        }
-                        if (viewModel.eventsList.isNotEmpty()) {
-                            Text(
-                                text = "Hapus Semua",
-                                color = Color.Red,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold,
+                        Text(
+                            text = "Kelola Kegiatan",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Box(
                                 modifier = Modifier
-                                    .clickable { showDeleteAllConfirm = true }
-                                    .padding(8.dp)
-                            )
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = "${viewModel.eventsList.size} kegiatan", // Bahasa Indonesia
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            if (viewModel.eventsList.isNotEmpty()) {
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Text(
+                                    text = "Hapus Semua",
+                                    color = Color.Red,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier
+                                        .clickable { showDeleteAllConfirm = true }
+                                        .padding(8.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -208,7 +271,7 @@ fun AdminDashboardPage(
             AlertDialog(
                 onDismissRequest = { showDeleteAllConfirm = false },
                 containerColor = MaterialTheme.colorScheme.surface,
-                title = { Text("Hapus Semua Event?", color = MaterialTheme.colorScheme.onBackground) },
+                title = { Text("Hapus Semua Kegiatan?", color = MaterialTheme.colorScheme.onBackground) },
                 text = { Text("Tindakan ini tidak dapat dibatalkan. Semua data kegiatan akan hilang permanen.", color = MaterialTheme.colorScheme.onBackground) },
                 confirmButton = {
                     TextButton(onClick = {
