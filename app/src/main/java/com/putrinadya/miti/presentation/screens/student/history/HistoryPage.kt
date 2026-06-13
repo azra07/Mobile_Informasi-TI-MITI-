@@ -4,29 +4,33 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.putrinadya.miti.presentation.components.HistoryItem
 import com.putrinadya.miti.presentation.components.TopBar
-import com.putrinadya.miti.ui.theme.*
+import com.putrinadya.miti.R
+import com.putrinadya.miti.ui.theme.MitiGray
 
 @Composable
 fun HistoryPage(
-    viewModel: HistoryViewModel = viewModel()
+    viewModel: HistoryViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MitiNavy)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        TopBar(title = "Activity History")
+        TopBar(title = stringResource(id = R.string.history))
 
         if (uiState.pastEvents.isEmpty()) {
             Box(
@@ -34,7 +38,7 @@ fun HistoryPage(
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "No past activities found.",
+                    text = stringResource(id = R.string.no_history),
                     color = MitiGray,
                     fontSize = 14.sp
                 )

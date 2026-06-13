@@ -20,32 +20,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.putrinadya.miti.presentation.screens.admin.dashboard.AdminDashboardViewModel
 import com.putrinadya.miti.ui.theme.*
 import androidx.navigation.NavController
+import com.putrinadya.miti.presentation.MainViewModel
 import com.putrinadya.miti.presentation.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileAdmin(
     viewModel: AdminDashboardViewModel,
-    navController: NavController,// Menerima ViewModel dashboard secara terpadu
+    navController: NavController,
+    mainViewModel: MainViewModel = hiltViewModel(),
     onBackClick: () -> Unit
 ) {
     val uiState = viewModel.uiState
 
-    // Menginisialisasi state lokal dari database secara dinamis saat data sukses dimuat
     var adminName by remember(uiState.adminName) { mutableStateOf(uiState.adminName) }
     var adminNip by remember(uiState.adminNip) { mutableStateOf(uiState.adminNip) }
     var adminEmail by remember(uiState.adminEmail) { mutableStateOf(uiState.adminEmail) }
-
     var showEditDialog by remember { mutableStateOf(false) }
-    var isDarkMode by remember { mutableStateOf(true) }
+
+    val isDarkMode by mainViewModel.isDarkMode.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MitiNavy)
+            .background(MaterialTheme.colorScheme.background)
             .padding(horizontal = 16.dp)
     ) {
         // Header
@@ -75,7 +77,7 @@ fun ProfileAdmin(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MitiCard),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -83,7 +85,7 @@ fun ProfileAdmin(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(80.dp)
-                                .background(MitiCyan)
+                                .background(MaterialTheme.colorScheme.primary)
                         )
 
                         Box(
@@ -95,13 +97,12 @@ fun ProfileAdmin(
                                 modifier = Modifier
                                     .offset(y = (-40).dp)
                                     .size(80.dp)
-                                    .background(MitiCyan, CircleShape)
-                                    .border(4.dp, MitiCard, CircleShape),
+                                    .background(MaterialTheme.colorScheme.primary, CircleShape)
+                                    .border(4.dp, MaterialTheme.colorScheme.surface, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
-                                // Menghasilkan inisial nama asli Admin secara dinamis (contoh: "amang" -> "AM")
                                 val initials = if (adminName.length >= 2) adminName.take(2).uppercase() else "AD"
-                                Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 22.sp)
+                                Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.background, fontSize = 22.sp)
                             }
 
                             OutlinedButton(
@@ -110,9 +111,9 @@ fun ProfileAdmin(
                                     .align(Alignment.TopEnd)
                                     .padding(top = 8.dp),
                                 shape = RoundedCornerShape(20.dp),
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MitiCyan),
+                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                                 border = ButtonDefaults.outlinedButtonBorder.copy(
-                                    brush = SolidColor(MitiCyan)
+                                    brush = SolidColor(MaterialTheme.colorScheme.primary)
                                 )
                             ) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -145,7 +146,7 @@ fun ProfileAdmin(
             item {
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = MitiCard),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
@@ -161,20 +162,20 @@ fun ProfileAdmin(
                                 Spacer(modifier = Modifier.width(12.dp))
                                 Column {
                                     Text("Mode Gelap", fontSize = 14.sp, color = MitiWhite, fontWeight = FontWeight.Bold)
-                                    Text(if (isDarkMode) "Aktif" else "Nonaktif", fontSize = 11.sp, color = MitiGray)
+                                    Text(if (isDarkMode) "Aktif" else "Nonaktif", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
                                 }
                             }
                             Switch(
                                 checked = isDarkMode,
-                                onCheckedChange = { isDarkMode = it },
+                                onCheckedChange = { mainViewModel.toggleTheme(it) },
                                 colors = SwitchDefaults.colors(
-                                    checkedThumbColor = MitiNavy,
-                                    checkedTrackColor = MitiCyan
+                                    checkedThumbColor = MaterialTheme.colorScheme.background,
+                                    checkedTrackColor = MaterialTheme.colorScheme.primary
                                 )
                             )
                         }
 
-                        Divider(color = Color(0xFF142233), thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
+                        Divider(color = MaterialTheme.colorScheme.onBackground, thickness = 1.dp, modifier = Modifier.padding(horizontal = 16.dp))
 
                         Row(
                             modifier = Modifier
@@ -280,7 +281,7 @@ fun EditAdminProfileDialog(
                 .fillMaxWidth()
                 .padding(24.dp)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = MitiCard),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(
@@ -311,21 +312,21 @@ fun EditAdminProfileDialog(
                     Box(
                         modifier = Modifier
                             .size(90.dp)
-                            .background(MitiCyan, CircleShape),
+                            .background(MaterialTheme.colorScheme.primary, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
                         // Menggunakan inisial nama edit dinamis (contoh: "amang" -> "AM")
                         val initials = if (nameInput.length >= 2) nameInput.take(2).uppercase() else "AD"
-                        Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 26.sp)
+                        Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.background, fontSize = 26.sp)
                     }
                     Box(
                         modifier = Modifier
                             .size(28.dp)
-                            .background(MitiCyan, CircleShape)
-                            .border(2.dp, MitiCard, CircleShape),
+                            .background(MaterialTheme.colorScheme.primary, CircleShape)
+                            .border(2.dp, MaterialTheme.colorScheme.surface, CircleShape),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Ubah Foto", tint = MitiNavy, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Add, contentDescription = "Ubah Foto", tint = MaterialTheme.colorScheme.background, modifier = Modifier.size(16.dp))
                     }
                 }
                 Text("Ketuk untuk mengubah foto", fontSize = 12.sp, color = MitiGray)
@@ -340,9 +341,9 @@ fun EditAdminProfileDialog(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = MitiWhite,
                             unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -358,9 +359,9 @@ fun EditAdminProfileDialog(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = MitiWhite,
                             unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -376,9 +377,9 @@ fun EditAdminProfileDialog(
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = MitiWhite,
                             unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedContainerColor = MaterialTheme.colorScheme.background,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -402,13 +403,13 @@ fun EditAdminProfileDialog(
                     Button(
                         onClick = { onSave(nameInput, nipInput, emailInput) },
                         modifier = Modifier.weight(1.3f).height(45.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         shape = RoundedCornerShape(22.dp)
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Default.Check, contentDescription = "Simpan", tint = MitiNavy, modifier = Modifier.size(16.dp))
+                            Icon(Icons.Default.Check, contentDescription = "Simpan", tint = MaterialTheme.colorScheme.background, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text("Simpan Perubahan", color = MitiNavy, fontWeight = FontWeight.Bold)
+                            Text("Simpan Perubahan", color = MaterialTheme.colorScheme.background, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

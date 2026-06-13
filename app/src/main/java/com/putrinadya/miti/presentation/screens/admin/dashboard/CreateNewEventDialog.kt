@@ -72,7 +72,7 @@ fun CreateNewEventDialog(
                 .fillMaxWidth()
                 .padding(24.dp)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = MitiCard),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(
@@ -88,33 +88,33 @@ fun CreateNewEventDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Buat Kegiatan Baru", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                    Text("Buat Kegiatan Baru", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
-                            .background(MitiWhite.copy(alpha = 0.1f), CircleShape)
+                            .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f), CircleShape)
                             .clickable { onClose() },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MitiWhite, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Close, contentDescription = "Tutup", tint = MaterialTheme.colorScheme.onBackground, modifier = Modifier.size(16.dp))
                     }
                 }
 
                 // 1. Judul Kegiatan
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Judul Kegiatan", color = MitiWhite, fontSize = 12.sp)
+                    Text("Judul Kegiatan", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                     OutlinedTextField(
                         value = eventTitle,
                         onValueChange = { eventTitle = it },
-                        placeholder = { Text("Nama Kegiatan", color = MitiGray) },
+                        placeholder = { Text("Nama Kegiatan", color = MaterialTheme.colorScheme.onBackground) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -122,11 +122,11 @@ fun CreateNewEventDialog(
 
                 // 2. Deskripsi
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Deskripsi", color = MitiWhite, fontSize = 12.sp)
+                    Text("Deskripsi", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        placeholder = { Text("Jelaskan detail acara..", color = MitiGray) },
+                        placeholder = { Text("Jelaskan detail acara..", color = MaterialTheme.colorScheme.onBackground) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(100.dp)
@@ -134,11 +134,11 @@ fun CreateNewEventDialog(
                         shape = RoundedCornerShape(12.dp),
                         maxLines = 4,
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -151,7 +151,7 @@ fun CreateNewEventDialog(
                 ) {
                     // Tanggal dengan Kalender Visual (DatePicker)
                     Column(modifier = Modifier.weight(1.1f)) {
-                        Text("Tanggal", color = MitiWhite, fontSize = 12.sp)
+                        Text("Tanggal", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -160,24 +160,24 @@ fun CreateNewEventDialog(
                             OutlinedTextField(
                                 value = dateString,
                                 onValueChange = {},
-                                readOnly = true, // Dikunci agar tidak diketik manual
-                                enabled = false, // Menghindari soft keyboard muncul
-                                placeholder = { Text("Pilih Tanggal", color = MitiGray) },
+                                readOnly = true,
+                                enabled = false,
+                                placeholder = { Text("Pilih Tanggal", color = MaterialTheme.colorScheme.onBackground) },
                                 trailingIcon = {
                                     Icon(
                                         Icons.Default.DateRange,
                                         contentDescription = "Kalender",
-                                        tint = MitiCyan,
+                                        tint = MaterialTheme.colorScheme.onBackground,
                                         modifier = Modifier.clickable { datePickerDialog.show() }
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    disabledTextColor = MitiWhite,
-                                    disabledContainerColor = MitiNavy,
-                                    disabledBorderColor = MitiCyan,
-                                    disabledPlaceholderColor = MitiGray
+                                    disabledTextColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledBorderColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onBackground
                                 )
                             )
                         }
@@ -185,19 +185,19 @@ fun CreateNewEventDialog(
 
                     // Waktu
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Waktu", color = MitiWhite, fontSize = 12.sp)
+                        Text("Waktu", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                         OutlinedTextField(
                             value = timeString,
                             onValueChange = { timeString = it },
-                            placeholder = { Text("00:00 WITA", color = MitiGray) },
+                            placeholder = { Text("00:00 WITA", color = MaterialTheme.colorScheme.onBackground) },
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = MitiWhite,
-                                unfocusedTextColor = MitiWhite,
-                                focusedContainerColor = MitiNavy,
-                                unfocusedContainerColor = MitiNavy,
-                                focusedBorderColor = MitiCyan,
+                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                focusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                                focusedBorderColor = MaterialTheme.colorScheme.onBackground,
                                 unfocusedBorderColor = Color.Transparent
                             )
                         )
@@ -206,20 +206,20 @@ fun CreateNewEventDialog(
 
                 // 4. Lokasi
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("Lokasi", color = MitiWhite, fontSize = 12.sp)
+                    Text("Lokasi", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                     OutlinedTextField(
                         value = location,
                         onValueChange = { location = it },
-                        placeholder = { Text("Ruang A-14 FT ULM BJM", color = MitiGray) },
-                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Lokasi", tint = MitiGray) },
+                        placeholder = { Text("Ruang A-14 FT ULM BJM", color = MaterialTheme.colorScheme.onBackground) },
+                        leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Lokasi", tint = MaterialTheme.colorScheme.onBackground) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = MitiWhite,
-                            unfocusedTextColor = MitiWhite,
-                            focusedContainerColor = MitiNavy,
-                            unfocusedContainerColor = MitiNavy,
-                            focusedBorderColor = MitiCyan,
+                            focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                            focusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                            focusedBorderColor = MaterialTheme.colorScheme.onBackground,
                             unfocusedBorderColor = Color.Transparent
                         )
                     )
@@ -232,32 +232,32 @@ fun CreateNewEventDialog(
                 ) {
                     // Jenis Kegiatan dengan Dropdown Menu (Tanpa ketik manual)
                     Column(modifier = Modifier.weight(1.2f)) {
-                        Text("Jenis Kegiatan", color = MitiWhite, fontSize = 12.sp)
+                        Text("Jenis Kegiatan", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { dropdownExpanded = true } // Klik box untuk memicu Dropdown Menu
+                                .clickable { dropdownExpanded = true }
                         ) {
                             OutlinedTextField(
                                 value = eventType,
                                 onValueChange = {},
-                                readOnly = true, // Mengunci input agar tidak memicu keyboard virtual
+                                readOnly = true,
                                 enabled = false,
                                 trailingIcon = {
                                     Icon(
                                         Icons.Default.KeyboardArrowDown,
                                         contentDescription = "Dropdown",
-                                        tint = MitiCyan,
+                                        tint = MaterialTheme.colorScheme.onBackground,
                                         modifier = Modifier.clickable { dropdownExpanded = true }
                                     )
                                 },
                                 modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
-                                    disabledTextColor = MitiWhite,
-                                    disabledContainerColor = MitiNavy,
-                                    disabledBorderColor = MitiCyan,
-                                    disabledPlaceholderColor = MitiGray
+                                    disabledTextColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledContainerColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledBorderColor = MaterialTheme.colorScheme.onBackground,
+                                    disabledPlaceholderColor = MaterialTheme.colorScheme.onBackground
                                 )
                             )
 
@@ -265,14 +265,14 @@ fun CreateNewEventDialog(
                             DropdownMenu(
                                 expanded = dropdownExpanded,
                                 onDismissRequest = { dropdownExpanded = false },
-                                modifier = Modifier.fillMaxWidth(0.5f).background(MitiCard)
+                                modifier = Modifier.fillMaxWidth(0.5f).background(MaterialTheme.colorScheme.surface)
                             ) {
                                 eventTypesList.forEach { type ->
                                     DropdownMenuItem(
-                                        text = { Text(type, color = MitiWhite) },
+                                        text = { Text(type, color = MaterialTheme.colorScheme.onBackground) },
                                         onClick = {
-                                            eventType = type // Ubah jenis kegiatan sesuai yang dipilih
-                                            dropdownExpanded = false // Tutup menu dropdown
+                                            eventType = type
+                                            dropdownExpanded = false
                                         }
                                     )
                                 }
@@ -282,18 +282,18 @@ fun CreateNewEventDialog(
 
                     // Kapasitas
                     Column(modifier = Modifier.weight(1f)) {
-                        Text("Kapasitas", color = MitiWhite, fontSize = 12.sp)
+                        Text("Kapasitas", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
                         OutlinedTextField(
                             value = capacity,
                             onValueChange = { capacity = it },
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedTextColor = MitiWhite,
-                                unfocusedTextColor = MitiWhite,
-                                focusedContainerColor = MitiNavy,
-                                unfocusedContainerColor = MitiNavy,
-                                focusedBorderColor = MitiCyan,
+                                focusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onBackground,
+                                focusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.onBackground,
+                                focusedBorderColor = MaterialTheme.colorScheme.onBackground,
                                 unfocusedBorderColor = Color.Transparent
                             )
                         )
@@ -343,10 +343,10 @@ fun CreateNewEventDialog(
                         onSave(newEvent)
                     },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface),
                     shape = RoundedCornerShape(25.dp)
                 ) {
-                    Text("Buat Kegiatan", color = MitiNavy, fontWeight = FontWeight.Bold)
+                    Text("Buat Kegiatan", color = MaterialTheme.colorScheme.onBackground, fontWeight = FontWeight.Bold)
                 }
             }
         }

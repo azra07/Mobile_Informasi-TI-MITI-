@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,11 +25,10 @@ fun UpcomingActivityCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
     val categoryColor = try {
         Color(android.graphics.Color.parseColor(event.categoryColorHex))
     } catch (e: Exception) {
-        MitiGray // Warna default jika gagal parsing
+        MaterialTheme.colorScheme.onBackground
     }
 
     Card(
@@ -36,7 +36,7 @@ fun UpcomingActivityCard(
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MitiCard), // Menggunakan MitiCard
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Menggunakan MitiCard
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -49,18 +49,18 @@ fun UpcomingActivityCard(
                 modifier = Modifier
                     .size(52.dp)
                     .background(
-                        Color(0xFF142233), // Warna latar belakang tanggal
+                       MaterialTheme.colorScheme.onBackground,
                         RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(event.dayMonth, fontSize = 11.sp, color = MitiGray) // Menggunakan MitiGray
+                    Text(event.dayMonth, fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
                     Text(
                         event.year,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MitiWhite // Menggunakan MitiWhite
+                        color = MaterialTheme.colorScheme.onBackground // Menggunakan MitiWhite
                     )
                 }
             }
@@ -72,16 +72,16 @@ fun UpcomingActivityCard(
                     event.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MitiWhite // Menggunakan MitiWhite
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(event.time, fontSize = 11.sp, color = MitiGray) // Menggunakan MitiGray
-                    Text(" • ", fontSize = 11.sp, color = MitiGray)
+                    Text(event.time, fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
+                    Text(" • ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
                     Text(
                         event.location,
                         fontSize = 11.sp,
-                        color = MitiGray, // Menggunakan MitiGray
+                        color = MaterialTheme.colorScheme.onBackground,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

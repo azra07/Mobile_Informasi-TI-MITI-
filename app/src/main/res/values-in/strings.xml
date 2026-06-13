@@ -1,53 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MITI</string>
-
-    <string name="onboarding_title_1">Informasi Terpusat</string>
-    <string name="onboarding_desc_1">Temukan informasi seminar, lomba, dan kegiatan Prodi TI tanpa takut tertinggal jarkoman.</string>
-    <string name="onboarding_title_2">Daftar Lebih Mudah</string>
-    <string name="onboarding_desc_2">Ikuti kegiatan yang kamu minati hanya dengan satu klik langsung dari dalam aplikasi.</string>
-    <string name="onboarding_title_3">Pantau Portofolio</string>
-    <string name="onboarding_desc_3">Riwayat keaktifanmu akan tercatat otomatis di profil sebagai portofolio digital.</string>
-    <string name="btn_next">Lanjut</string>
-    <string name="btn_skip">Lewati</string>
-    <string name="btn_start">Mulai Sekarang</string>
-
-    <string name="login_welcome">Selamat Datang Kembali</string>
-    <string name="login_subtitle">Kelola kegiatan teknologi universitasmu</string>
-    <string name="password_label">Kata Sandi</string>
-    <string name="dont_have_account">Belum punya akun? Daftar</string>
-    <string name="role_student">Mahasiswa</string>
-    <string name="role_admin">Admin / Dosen</string>
-    <string name="login_title">Masuk ke Akun</string>
-    <string name="login_as_student">Masuk sebagai Mahasiswa</string><string name="login_as_admin">Masuk sebagai Admin</string>
-    <string name="create_account">Buat Akun</string>
-    <string name="register_title">Daftar Akun</string>
-    <string name="register_subtitle">Gabung ke komunitas IT Activity Hub</string>
-    <string name="full_name">Nama Lengkap</string>
-    <string name="email_label">Alamat Email</string>
-    <string name="nim_label">NIM (ID Mahasiswa)</string>
-    <string name="register_as">Daftar Sebagai</string>
-    <string name="btn_create_account">Daftar Sekarang</string>
-    <string name="error_empty_fields">Tolong isi semua kolom</string>
-
+    <string name="app_tagline">Manajemen Aktivitas TI</string>
     <string name="no_title">Tanpa Judul</string>
-    <string name="no_location">Lokasi Belum Ditentukan</string>
     <string name="general_category">Umum</string>
+    <string name="footer">Teknologi Informasi | Universitas Lambung Mangkurat</string>
 
-    <string name="news_title">Wawasan IT Global</string>
-    <string name="error_loading">Gagal memuat berita</string>
-
-    <!-- Bottom Navigation -->
+    <!-- Navigasi -->
     <string name="nav_home">Beranda</string>
-    <string name="nav_news">Berita</string>
     <string name="nav_calendar">Kalender</string>
+    <string name="nav_news">Berita</string>
     <string name="nav_profile">Profil</string>
 
-    <!-- Dashboard Content -->
-    <string name="greeting_evening">Selamat Malam,</string>
-    <string name="search_placeholder">Cari acara, workshops...</string>
-    <string name="section_featured">Acara Teknologi Unggulan</string>
-    <string name="section_upcoming">Acara Mendatang</string>
+    <!-- Aksi Umum -->
+    <string name="btn_save">Simpan</string>
+    <string name="btn_cancel">Batal</string>
+    <string name="btn_delete">Hapus</string>
+    <string name="btn_close">Tutup</string>
+    <string name="btn_back">Kembali</string>
     <string name="label_see_all">Lihat Semua</string>
     <string name="label_view_all">Lihat Selengkapnya</string>
+
+    <!-- Layar Onboarding -->
+    <string name="onboarding_title_1">Tetap Terupdate</string>
+    <string name="onboarding_desc_1">Dapatkan notifikasi real-time tentang kegiatan IT terbaru di kampus.</string>
+    <string name="onboarding_title_2">Pendaftaran Mudah</string>
+    <string name="onboarding_desc_2">Daftar workshop dan seminar hanya dengan satu klik.</string>
+    <string name="onboarding_title_3">Pantau Aktivitas</string>
+    <string name="onboarding_desc_3">Pantau riwayat aktivitas dan sertifikatmu dengan mudah.</string>
+    <string name="btn_skip">Lewati</string>
+    <string name="btn_next">Lanjut</string>
+    <string name="btn_start">Mulai Sekarang</string>
+
+    <!-- Autentikasi (Login/Daftar) -->
+    <string name="login_welcome">Selamat Datang</string>
+    <string name="login_subtitle">Masuk untuk melanjutkan</string>
+    <string name="email_label">Alamat Email</string>
+    <string name="password_label">Kata Sandi</string>
+    <string name="enter_pass">Masukkan Kata Sandi Anda</string>
+    <string name="nim_label">NIM (ID Mahasiswa)</string>
+    <string name="login_as_student">Masuk sebagai Mahasiswa</string>
+    <string name="login_as_admin">Masuk sebagai Admin</string>
+    <string name="create_account">Buat Akun</string>
+    <string name="register_title">Gabung MITI</string>
+    <string name="register_subtitle">Isi detail Anda untuk mendaftar</string>
+    <string name="full_name">Nama Lengkap</string>
+    <string name="register_as">Daftar sebagai</string>
+    <string name="role_student">Mahasiswa</string>
+    <string name="role_admin">Admin</string>
+    <string name="btn_create_account">Daftar Sekarang</string>
+    <string name="forgot">Lupa Kata Sandi?</string>
+
+    <!-- Dashboard & Kegiatan -->
+    <string name="greeting">Halo,</string>
+    <string name="search_placeholder">Cari kegiatan...</string>
+    <string name="section_featured">Kegiatan Unggulan</string>
+    <string name="section_upcoming">Kegiatan Mendatang</string>
+    <string name="event_joined">Terdaftar ✓</string>
+    <string name="event_join_now">Ikuti Kegiatan</string>
+
+    <!-- Kalender -->
+    <string name="day_sun">Min</string>
+    <string name="day_mon">Sen</string>
+    <string name="day_tue">Sel</string>
+    <string name="day_wed">Rab</string>
+    <string name="day_thu">Kam</string>
+    <string name="day_fri">Jum</string>
+    <string name="day_sat">Sab</string>
+
+    <!-- Khusus Admin -->
+    <string name="admin_mode">Mode Admin</string>
+    <string name="manage_events">Kelola Kegiatan</string>
+    <string name="btn_add_event">Buat Kegiatan Baru</string>
+    <string name="btn_edit_event">Edit Kegiatan</string>
+    <string name="delete_all_confirm">Hapus Semua Kegiatan?</string>
+    <string name="delete_all_desc">Tindakan ini tidak bisa dibatalkan. Semua data akan hilang.</string>
+
+    <!-- Profil & Pengaturan -->
+    <string name="profile_title">Profil</string>
+    <string name="edit_profile">Edit Profil</string>
+    <string name="history">Riwayat Aktivitas</string>
+    <string name="no_history">Tidak Ada Riwayat Aktivitas</string>
+    <string name="dark_mode">Mode Gelap</string>
+    <string name="language">Bahasa</string>
+    <string name="account_security">Keamanan Akun</string>
+    <string name="logout">Keluar Akun</string>
+    <string name="send_link">Link ganti password telah dikirim ke email Anda</string>
+    <string name="failed_send_link">Gagal mengirim email</string>
+    <string name="send_aspiration">Aspirasi berhasil dikirim! Terima kasih</string>
+    <string name="failed_send_aspiration">Gagal mengirim aspirasi</string>
+
+    <!-- News -->
+    <string name="news_title">Berita Global TI</string>
+    <string name="error_loading">Gagal memuat berita</string>
+
+    <!-- Aspirasi -->
+    <string name="aspiration_title">Kirim Aspirasi</string>
+    <string name="aspiration_subtitle">Berikan saran atau keluhanmu</string>
+    <string name="aspiration_placeholder">Tulis aspirasimu di sini...</string>
+    <string name="aspiration_anonymous">Kirim sebagai Anonim</string>
 </resources>

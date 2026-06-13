@@ -19,9 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.putrinadya.miti.R
-import com.putrinadya.miti.domain.model.Event
 import com.putrinadya.miti.presentation.screens.profile.ProfileAdmin
-import com.putrinadya.miti.ui.theme.*
 import androidx.navigation.NavController
 
 @Composable
@@ -30,6 +28,7 @@ fun AdminDashboardPage(
     navController: NavController // <--- 2. Terima parameter ini di sini
 ) {
     val uiState = viewModel.uiState
+    var showDeleteAllConfirm by remember { mutableStateOf(false) }
 
     if (uiState.currentSubScreen == "profile") {
         // Mengirimkan instance viewModel agar halaman ProfileAdmin memuat data NIP, Nama, dll secara dinamis
@@ -43,17 +42,17 @@ fun AdminDashboardPage(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = { viewModel.onShowCreateEventDialog(true) },
-                    containerColor = MitiCyan,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     shape = CircleShape
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Event", tint = MitiNavy)
+                    Icon(Icons.Default.Add, contentDescription = "Add Event", tint = MaterialTheme.colorScheme.onBackground)
                 }
             }
         ) { innerPadding ->
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MitiNavy)
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(innerPadding)
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -66,29 +65,29 @@ fun AdminDashboardPage(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(stringResource(id = R.string.app_name), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                            Text(stringResource(id = R.string.app_name), fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(modifier = Modifier.size(8.dp).background(Color.Green, CircleShape))
                                 Spacer(modifier = Modifier.width(6.dp))
-                                Text("Admin Mode", fontSize = 12.sp, color = MitiGray)
+                                Text("Admin Mode", fontSize = 12.sp, color = MaterialTheme.colorScheme.onBackground)
                             }
                             Spacer(modifier = Modifier.height(12.dp))
-                            Text(text = "Selamat datang!", fontSize = 14.sp, color = MitiGray)
+                            Text(text = "Selamat datang!", fontSize = 14.sp, color = MaterialTheme.colorScheme.onBackground)
 
                             // MEMBACA NAMA ADMIN SECARA DINAMIS DARI FIRESTORE DATABASE
-                            Text("${uiState.adminName}!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                            Text("${uiState.adminName}!", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                         }
 
                         // Avatar DSC (Menampilkan Inisial Nama Admin Secara Dinamis)
                         Box(
                             modifier = Modifier
                                 .size(45.dp)
-                                .background(MitiCyan, shape = CircleShape)
+                                .background(MaterialTheme.colorScheme.onBackground, shape = CircleShape)
                                 .clickable { viewModel.onNavigateToSubScreen("profile") },
                             contentAlignment = Alignment.Center
                         ) {
                             val initials = if (uiState.adminName.length >= 2) uiState.adminName.take(2).uppercase() else "AD"
-                            Text(initials, fontWeight = FontWeight.Bold, color = MitiNavy, fontSize = 15.sp)
+                            Text(initials, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp)
                         }
                     }
                 }
@@ -102,6 +101,35 @@ fun AdminDashboardPage(
                         StatCard(title = "Total Events", value = uiState.totalEvents.toString(), iconText = "📅", modifier = Modifier.weight(1f))
                         StatCard(title = "Active Participants", value = uiState.activeParticipants.toString(), iconText = "👥", modifier = Modifier.weight(1.1f))
                         StatCard(title = "New Aspirations", value = uiState.newAspirations.toString(), iconText = "💡", modifier = Modifier.weight(1f))
+                        StatCard(
+                            title = "Total Students",
+                            value = uiState.totalStudents.toString(),
+                            iconText = "🎓",
+                            modifier = Modifier.weight(1f).clickable {
+                                viewModel.onShowRegisterDialog(true) // Klik untuk daftar user baru
+                            }
+                        )
+                    }
+                }
+
+                item {
+                    Text("Daftar Aspirasi Mahasiswa", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+                }
+
+                items(uiState.aspirationsList) { aspirasi ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(text = aspirasi.category, color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                            Text(text = aspirasi.content, color = MaterialTheme.colorScheme.onBackground)
+                            Text(
+                                text = if(aspirasi.isAnonymous) "Dari: Anonim" else "Dari: ${aspirasi.userName}",
+                                color = MaterialTheme.colorScheme.onBackground,
+                                fontSize = 10.sp
+                            )
+                        }
                     }
                 }
 
@@ -112,13 +140,24 @@ fun AdminDashboardPage(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Manage Events", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
+                        Text("Manage Events", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
                         Box(
                             modifier = Modifier
-                                .background(MitiCard, RoundedCornerShape(12.dp))
+                                .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(12.dp))
                                 .padding(horizontal = 10.dp, vertical = 4.dp)
                         ) {
-                            Text("${viewModel.eventsList.size} events", color = MitiGray, fontSize = 12.sp)
+                            Text("${viewModel.eventsList.size} events", color = MaterialTheme.colorScheme.onBackground, fontSize = 12.sp)
+                        }
+                        if (viewModel.eventsList.isNotEmpty()) {
+                            Text(
+                                text = "Hapus Semua",
+                                color = Color.Red,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .clickable { showDeleteAllConfirm = true }
+                                    .padding(8.dp)
+                            )
                         }
                     }
                 }
@@ -153,6 +192,38 @@ fun AdminDashboardPage(
                     }
                 )
             }
+
+            if (uiState.showRegisterUserDialog) {
+                RegisterStudentDialog(
+                    onClose = { viewModel.onShowRegisterDialog(false) },
+                    onRegister = { name, email, pass, nim ->
+                        viewModel.registerNewStudent(name, email, pass, nim)
+                    },
+                    isLoading = uiState.isRegistering
+                )
+            }
+        }
+
+        if (showDeleteAllConfirm) {
+            AlertDialog(
+                onDismissRequest = { showDeleteAllConfirm = false },
+                containerColor = MaterialTheme.colorScheme.surface,
+                title = { Text("Hapus Semua Event?", color = MaterialTheme.colorScheme.onBackground) },
+                text = { Text("Tindakan ini tidak dapat dibatalkan. Semua data kegiatan akan hilang permanen.", color = MaterialTheme.colorScheme.onBackground) },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.clearAllEvents()
+                        showDeleteAllConfirm = false
+                    }) {
+                        Text("Hapus", color = Color.Red, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteAllConfirm = false }) {
+                        Text("Batal", color = MaterialTheme.colorScheme.onBackground)
+                    }
+                }
+            )
         }
     }
 }

@@ -6,7 +6,7 @@ data class User(
     val email: String = "",
     val role: String = "",
     val nim: String = "",
-    val nip: String = "",         // TAMBAHKAN INI
-    val title: String = "",       // TAMBAHKAN INI
-    val department: String = ""   // TAMBAHKAN INI
+    val nip: String = "",
+    val title: String = "",
+    val department: String = ""
 )

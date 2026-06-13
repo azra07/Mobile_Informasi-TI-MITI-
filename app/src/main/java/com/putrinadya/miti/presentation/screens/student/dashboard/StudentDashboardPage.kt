@@ -78,9 +78,9 @@ fun StudentDashboardPage(viewModel: StudentDashboardViewModel, navController: Na
                         icon = { Icon(icon, contentDescription = null) },
                         label = { Text(stringResource(labelRes)) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MitiNavy,
-                            selectedTextColor = MitiCyan,
-                            indicatorColor = MitiCyan,
+                            selectedIconColor = MaterialTheme.colorScheme.background,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = MaterialTheme.colorScheme.primary,
                             unselectedIconColor = MitiGray,
                             unselectedTextColor = MitiGray
                         )
@@ -103,10 +103,9 @@ fun StudentDashboardPage(viewModel: StudentDashboardViewModel, navController: Na
                         navController.navigate("news_detail/$encodedUrl")
                     }
                 )
-                3 -> ProfileStudent(viewModel = hiltViewModel())
+                3 -> ProfileStudent(viewModel = hiltViewModel(), navController = navController)
             }
 
-            // POP-UP PENDAFTARAN (DIALOG)
             viewModel.selectedEventForRegistration?.let { event ->
                 val isJoined = viewModel.registeredEvents.any { it.title == event.title }
 
@@ -155,18 +154,17 @@ fun HomeContent(
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        stringResource(R.string.greeting_evening),
+                        stringResource(R.string.greeting),
                         style = MaterialTheme.typography.bodyMedium,
                         color = colorScheme.onSurfaceVariant
                     )
                     Text(
-                        "Alex!",
+                        "${viewModel.studentProfile?.name ?: "Mahasiswa"}!",
                         style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.onBackground
                     )
                 }
-                // Avatar
                 Box(
                     modifier = Modifier.size(45.dp)
                         .background(colorScheme.primaryContainer, shape = CircleShape),

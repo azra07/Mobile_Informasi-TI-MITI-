@@ -9,6 +9,6 @@ interface NewsApiService {
     suspend fun getTechNews(
         @Query("category") category: String = "technology",
         @Query("language") language: String = "en",
-        @Query("apiKey") apiKey: String = "1522afb91c2d464aa5cd0e91f6cfc70f"
+        @Query("apiKey") apiKey: String = com.putrinadya.miti.BuildConfig.NEWS_API_KEY
     ): NewsResponse
 }

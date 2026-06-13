@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -18,6 +20,16 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // KODE UNTUK MEMBACA NEWS_API_KEY DARI local.properties
+        val properties = Properties()
+        val propertiesFile = project.rootProject.file("local.properties")
+        if (propertiesFile.exists()) {
+            properties.load(propertiesFile.inputStream())
+        }
+
+        val apiKey = properties.getProperty("NEWS_API_KEY") ?: ""
+        buildConfigField("String", "NEWS_API_KEY", "\"$apiKey\"")
     }
 
     buildTypes {
@@ -35,6 +47,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -77,6 +90,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
 
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 
     // Coil
     implementation(libs.coil.compose)

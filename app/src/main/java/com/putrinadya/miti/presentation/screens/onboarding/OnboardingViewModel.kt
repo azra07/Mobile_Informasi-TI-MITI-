@@ -9,10 +9,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.putrinadya.miti.domain.model.OnboardingItem
 import com.putrinadya.miti.R
+import com.putrinadya.miti.domain.repository.PreferenceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class OnboardingViewModel : ViewModel() {
+@HiltViewModel
+class OnboardingViewModel @Inject constructor(
+    private val prefRepo: PreferenceRepository
+) : ViewModel() {
     var uiState by mutableStateOf(OnboardingUiState())
         private set
 
@@ -41,11 +49,17 @@ class OnboardingViewModel : ViewModel() {
 
     fun onNextPage() {
         val nextPage = uiState.currentPage + 1
-        uiState = if (nextPage < totalPages) {
-            uiState.copy(currentPage = nextPage)
+       if (nextPage < totalPages) {
+            uiState = uiState.copy(currentPage = nextPage)
         } else {
-            uiState.copy(isCompleted = true)
+            viewModelScope.launch {
+                prefRepo.saveOnboardingStatus(true)
+                uiState.copy(isCompleted = true)
+            }
         }
+    }
+    fun onPageSwiped(index: Int) {
+        uiState = uiState.copy(currentPage = index)
     }
 
     fun onSkip() {

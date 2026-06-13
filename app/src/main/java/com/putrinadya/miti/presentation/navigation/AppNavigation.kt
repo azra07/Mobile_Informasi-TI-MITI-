@@ -1,6 +1,7 @@
 package com.putrinadya.miti.presentation.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -14,10 +15,17 @@ import com.putrinadya.miti.presentation.screens.student.dashboard.StudentDashboa
 import com.putrinadya.miti.presentation.screens.admin.dashboard.AdminDashboardPage
 import com.putrinadya.miti.presentation.screens.admin.dashboard.AdminDashboardViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.putrinadya.miti.presentation.MainViewModel
+import com.putrinadya.miti.presentation.screens.news.NewsDetailScreen
+import kotlinx.coroutines.launch
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val mainViewModel: MainViewModel = hiltViewModel() // Ambil MainViewModel
+    val scope = rememberCoroutineScope()
 
     NavHost(
         navController = navController,
@@ -27,9 +35,11 @@ fun AppNavigation() {
         composable(Screen.Splash.route) {
             SplashScreen(
                 onSplashComplete = {
-                    // Setelah Splash selesai, lompat ke Onboarding & bersihkan Splash dari tumpukan memori
-                    navController.navigate(Screen.Onboarding.route) {
-                        popUpTo(Screen.Splash.route) { inclusive = true }
+                    scope.launch {
+                        val destination = mainViewModel.getStartDestination()
+                        navController.navigate(destination) {
+                            popUpTo(Screen.Splash.route) { inclusive = true }
+                        }
                     }
                 }
             )
@@ -80,5 +90,14 @@ fun AppNavigation() {
                 navController = navController // <--- Tambahkan parameter ini
             )
         }
+
+        composable(
+            route = "news_detail/{url}",
+            arguments = listOf(navArgument("url") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val url = backStackEntry.arguments?.getString("url") ?: ""
+            NewsDetailScreen(url = url, onBackClick = { navController.popBackStack() })
+        }
+
     }
 }

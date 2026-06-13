@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +28,7 @@ fun FeaturedEventCard(
             .width(260.dp)
             .height(180.dp)
             .clip(RoundedCornerShape(16.dp))
-            .background(MitiCyan) // Menggunakan MitiCyan
+            .background(MaterialTheme.colorScheme.background) // Menggunakan MitiCyan
             .clickable { onClick() }
             .padding(16.dp)
     ) {
@@ -39,11 +40,11 @@ fun FeaturedEventCard(
                 Text(
                     text = event.category.uppercase(),
                     fontSize = 11.sp,
-                    color = MitiNavy, // Menggunakan MitiNavy
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .background(
-                            MitiWhite.copy(alpha = 0.3f), // Menggunakan MitiWhite
+                            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f), // Menggunakan MitiWhite
                             RoundedCornerShape(4.dp)
                         )
                         .padding(horizontal = 6.dp, vertical = 2.dp)
@@ -53,7 +54,7 @@ fun FeaturedEventCard(
                     text = event.title,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MitiNavy, // Menggunakan MitiNavy
+                    color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -61,7 +62,7 @@ fun FeaturedEventCard(
                 Text(
                     text = event.description,
                     fontSize = 12.sp,
-                    color = MitiNavy.copy(alpha = 0.8f), // Menggunakan MitiNavy
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -76,12 +77,12 @@ fun FeaturedEventCard(
                     event.time,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MitiNavy // Menggunakan MitiNavy
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Text(
                     "👥 ${event.currentParticipants}/${event.maxParticipants}",
                     fontSize = 12.sp,
-                    color = MitiNavy // Menggunakan MitiNavy
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }

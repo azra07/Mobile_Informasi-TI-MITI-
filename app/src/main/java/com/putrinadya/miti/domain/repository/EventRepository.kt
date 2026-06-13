@@ -13,7 +13,7 @@ interface EventRepository {
     // Memperbarui data event di Firestore dengan pengembalian Result untuk deteksi error
     suspend fun updateEvent(id: String, event: Event): Result<Unit>
     suspend fun deleteEvent(id: String): Result<Unit>
-
+    suspend fun deleteAllEvents(): Result<Unit>
     // Mengambil total partisipan secara real-time
     fun getTotalParticipants(): Flow<Int>
 

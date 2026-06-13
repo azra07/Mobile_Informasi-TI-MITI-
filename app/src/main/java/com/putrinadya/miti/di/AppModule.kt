@@ -7,9 +7,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.putrinadya.miti.data.local.MitiDatabase
 import com.putrinadya.miti.data.local.dao.MitiDao
 import com.putrinadya.miti.data.remote.NewsApiService
+import com.putrinadya.miti.data.repository.AspirationRepositoryImpl
 import com.putrinadya.miti.data.repository.NewsRepositoryImpl
 import com.putrinadya.miti.data.repository.AuthRepositoryImpl
 import com.putrinadya.miti.data.repository.EventRepositoryImpl
+import com.putrinadya.miti.data.repository.PreferenceRepositoryImpl
+import com.putrinadya.miti.domain.repository.PreferenceRepository
+import com.putrinadya.miti.domain.repository.AspirationRepository
 import com.putrinadya.miti.domain.repository.AuthRepository
 import com.putrinadya.miti.domain.repository.EventRepository
 import com.putrinadya.miti.domain.repository.NewsRepository
@@ -25,18 +29,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
-    // 1. Menyediakan Firebase Auth
     @Provides
     @Singleton
     fun provideFirebaseAuth(): FirebaseAuth = FirebaseAuth.getInstance()
 
-    // 2. Menyediakan Firebase Firestore
     @Provides
     @Singleton
     fun provideFirestore(): FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    // 3. Menyediakan Room Database
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): MitiDatabase {
@@ -44,21 +44,35 @@ object AppModule {
             context,
             MitiDatabase::class.java,
             "miti_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides
     @Singleton
     fun provideMitiDao(db: MitiDatabase): MitiDao = db.dao
 
-    // 4. Menghubungkan Interface Repository dengan Implementasinya
     @Provides
     @Singleton
     fun provideAuthRepository(
         auth: FirebaseAuth,
-        firestore: FirebaseFirestore
+        firestore: FirebaseFirestore,
+        @ApplicationContext context: Context
     ): AuthRepository {
-        return AuthRepositoryImpl(auth, firestore)
+        return AuthRepositoryImpl(auth, firestore, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAspirationRepository(firestore: FirebaseFirestore): AspirationRepository {
+        return AspirationRepositoryImpl(firestore)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferenceRepository(@ApplicationContext context: Context): PreferenceRepository {
+        return PreferenceRepositoryImpl(context)
     }
 
     @Provides

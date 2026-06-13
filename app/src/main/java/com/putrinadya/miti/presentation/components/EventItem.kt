@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,18 +27,17 @@ fun EventItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
     val categoryColor = try {
         Color(android.graphics.Color.parseColor(event.categoryColorHex))
     } catch (e: Exception) {
-        MitiGray // Warna fallback dari color.kt jika terjadi kegagalan parsing
+        MaterialTheme.colorScheme.onBackground
     }
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = MitiCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -48,7 +48,7 @@ fun EventItem(
                 modifier = Modifier
                     .width(4.dp)
                     .height(48.dp)
-                    .background(categoryColor, RoundedCornerShape(2.dp)) // Menggunakan categoryColor hasil konversi
+                    .background(categoryColor, RoundedCornerShape(2.dp))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -58,7 +58,7 @@ fun EventItem(
                     text = if (event.title.isEmpty()) stringResource(R.string.no_title) else event.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MitiWhite,
+                    color = MaterialTheme.colorScheme.onBackground,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -69,14 +69,14 @@ fun EventItem(
                     Text(
                         text = if (event.category.isEmpty()) stringResource(R.string.general_category) else event.category,
                         fontSize = 11.sp,
-                        color = categoryColor, // Menggunakan categoryColor hasil konversi
+                        color = categoryColor,
                         fontWeight = FontWeight.Bold
                     )
-                    Text(" • ", fontSize = 11.sp, color = MitiGray)
+                    Text(" • ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
                     Text(
                         text = "${event.dayMonth} ${event.year}",
                         fontSize = 11.sp,
-                        color = MitiGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }

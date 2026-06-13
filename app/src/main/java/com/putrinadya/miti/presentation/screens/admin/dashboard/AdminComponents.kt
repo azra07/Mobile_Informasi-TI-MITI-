@@ -12,6 +12,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +35,7 @@ import java.util.Locale
 fun StatCard(title: String, value: String, iconText: String, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier.height(100.dp),
-        colors = CardDefaults.cardColors(containerColor = MitiCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(
@@ -43,13 +44,13 @@ fun StatCard(title: String, value: String, iconText: String, modifier: Modifier 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
-                modifier = Modifier.size(28.dp).background(Color(0xFF142233), CircleShape),
+                modifier = Modifier.size(28.dp).background(MaterialTheme.colorScheme.onBackground, CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Text(iconText, fontSize = 14.sp)
             }
-            Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MitiWhite)
-            Text(title, fontSize = 9.sp, color = MitiGray, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(value, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground)
+            Text(title, fontSize = 9.sp, color = MaterialTheme.colorScheme.onBackground, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }
@@ -66,14 +67,14 @@ fun AdminEventCard(
     val categoryColor = try {
         Color(android.graphics.Color.parseColor(event.categoryColorHex))
     } catch (e: Exception) {
-        MitiGray
+        MaterialTheme.colorScheme.onBackground
     }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MitiCard),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -85,15 +86,15 @@ fun AdminEventCard(
             // Menu Titik Tiga (MoreVert) di sebelah kiri
             Box {
                 IconButton(onClick = { showMenu = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MitiGray)
+                    Icon(Icons.Default.MoreVert, contentDescription = "Options", tint = MaterialTheme.colorScheme.onBackground)
                 }
                 DropdownMenu(
                     expanded = showMenu,
                     onDismissRequest = { showMenu = false },
-                    modifier = Modifier.background(MitiCard)
+                    modifier = Modifier.background(MaterialTheme.colorScheme.onBackground)
                 ) {
                     DropdownMenuItem(
-                        text = { Text("Edit Event", color = MitiWhite) },
+                        text = { Text("Edit Event", color = MaterialTheme.colorScheme.onBackground) },
                         onClick = { showMenu = false; onEdit() }
                     )
                     DropdownMenuItem(
@@ -120,7 +121,7 @@ fun AdminEventCard(
                         text = event.title,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MitiWhite,
+                        color = MaterialTheme.colorScheme.onBackground,
                         modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -161,13 +162,13 @@ fun AdminEventCard(
                     Text(
                         text = "📅 $formattedDate",
                         fontSize = 11.sp,
-                        color = MitiGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "🕒 ${event.time}",
                         fontSize = 11.sp,
-                        color = MitiGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -179,13 +180,13 @@ fun AdminEventCard(
                     Text(
                         text = "👥 ${event.currentParticipants}/${event.maxParticipants}",
                         fontSize = 11.sp,
-                        color = MitiGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
                         text = "📍 ${event.location}",
                         fontSize = 11.sp,
-                        color = MitiGray,
+                        color = MaterialTheme.colorScheme.onBackground,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

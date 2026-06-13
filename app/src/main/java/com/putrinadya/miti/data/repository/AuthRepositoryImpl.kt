@@ -2,8 +2,12 @@ package com.putrinadya.miti.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.putrinadya.miti.domain.model.User
 import com.putrinadya.miti.domain.repository.AuthRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -14,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    @ApplicationContext private val context: android.content.Context
 ) : AuthRepository {
 
     override fun login(email: String, password: String): Flow<Result<User>> = callbackFlow {
@@ -22,8 +27,8 @@ class AuthRepositoryImpl @Inject constructor(
             .addOnSuccessListener { result ->
                 val uid = result.user?.uid ?: ""
                 android.util.Log.d("MITI_DEBUG", "UID asli dari Auth adalah: $uid")
+
                 firestore.collection("users").document(uid).get()
-                // Setelah login sukses, ambil data dari Firestore
                 firestore.collection("users").document(uid).get()
                     .addOnSuccessListener { document ->
                         if (document.exists()) {
@@ -36,10 +41,9 @@ class AuthRepositoryImpl @Inject constructor(
                             )
                             trySend(Result.success(user))
                         } else {
-                            // Jika dokumen tidak ditemukan di Firestore
-                            trySend(Result.failure(Exception("Data pengguna tidak ditemukan di database.")))
+                             trySend(Result.failure(Exception("Data pengguna tidak ditemukan di database.")))
                         }
-                        close() // Tutup channel setelah data dikirim
+                        close()
                     }
                     .addOnFailureListener {
                         trySend(Result.failure(it))
@@ -70,15 +74,75 @@ class AuthRepositoryImpl @Inject constructor(
                     "name" to name,
                     "email" to email,
                     "role" to role,
-                    "nim" to if (role == "student") name.filter { it.isDigit() } else ""
+                    "nim" to if (role == "student") nim  else ""
                 )
-                // Simpan data user ke Firestore agar kita tahu dia Admin atau Mahasiswa
                 firestore.collection("users").document(uid).set(userData)
                     .addOnSuccessListener { trySend(Result.success(Unit)) }
                     .addOnFailureListener { trySend(Result.failure(it)) }
             }
             .addOnFailureListener { trySend(Result.failure(it)) }
         awaitClose()
+    }
+
+    override fun registerStudent(
+        name: String,
+        email: String,
+        password: String,
+        nim: String
+    ): Flow<Result<Unit>> = callbackFlow {
+        val secondaryAppName = "SecondaryApp"
+        val options = FirebaseApp.getInstance().options
+        val secondaryApp = try {
+            FirebaseApp.initializeApp(context, options, secondaryAppName)
+        } catch (e: Exception) {
+            FirebaseApp.getInstance(secondaryAppName)
+        }
+
+        val secondaryAuth = Firebase.auth(secondaryApp)
+
+        secondaryAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { result ->
+                val uid = result.user?.uid ?: ""
+                val userData = hashMapOf(
+                    "uid" to uid,
+                    "name" to name,
+                    "email" to email,
+                    "role" to "student",
+                    "nim" to nim
+                )
+
+                // 3. Simpan Detail ke Firestore
+                firestore.collection("users").document(uid).set(userData)
+                    .addOnSuccessListener {
+                        // 4. Logout dari secondary app & hapus instance
+                        secondaryAuth.signOut()
+                        secondaryApp.delete()
+                        trySend(Result.success(Unit))
+                        close()
+                    }
+                    .addOnFailureListener {
+                        trySend(Result.failure(it))
+                        close()
+                    }
+            }
+            .addOnFailureListener {
+                trySend(Result.failure(it))
+                close()
+            }
+        awaitClose()
+    }
+
+    override suspend fun updateUserProfile(name: String, nim: String, email: String): Result<Unit> = try {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not logged in")
+        val updates = hashMapOf(
+            "name" to name,
+            "nim" to nim,
+            "email" to email
+        )
+        firestore.collection("users").document(uid).update(updates as Map<String, Any>).await()
+        Result.success(Unit)
+    } catch (e: Exception) {
+        Result.failure(e)
     }
 
     override fun getCurrentUser(): User? {
@@ -106,6 +170,30 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             null
         }
+    }
+
+    override fun getStudentCount(): Flow<Int> = callbackFlow {
+        val subscription = firestore.collection("users")
+            .whereEqualTo("role", "student")
+            .addSnapshotListener { snapshot, _ ->
+                if (snapshot != null) {
+                    trySend(snapshot.size())
+                }
+            }
+        awaitClose { subscription.remove() }
+    }
+
+    override fun sendPasswordResetEmail(email: String): Flow<Result<Unit>> = callbackFlow {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                trySend(Result.success(Unit))
+                close()
+            }
+            .addOnFailureListener {
+                trySend(Result.failure(it))
+                close()
+            }
+        awaitClose()
     }
 
     override fun logout() {

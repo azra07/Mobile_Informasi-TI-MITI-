@@ -71,7 +71,7 @@ fun RegisterPage(
                 Text(
                     text = stringResource(id = R.string.register_subtitle),
                     fontSize = 14.sp,
-                    color = MitiGray
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
 

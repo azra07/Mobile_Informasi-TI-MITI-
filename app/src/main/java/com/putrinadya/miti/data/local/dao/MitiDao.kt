@@ -34,6 +34,12 @@ interface MitiDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertNews(news: List<NewsEntity>)
 
+    @Transaction
+    suspend fun updatePublishedEventsSync(events: List<EventEntity>) {
+        deleteAllPublishedEvents()
+        insertEvents(events)
+    }
+
     @Query("DELETE FROM news")
     suspend fun clearNews()
 }

@@ -21,15 +21,26 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import com.putrinadya.miti.R
 import com.putrinadya.miti.ui.theme.*
 
 @Composable
 fun OnboardingPage(
-    viewModel: OnboardingViewModel = viewModel(),
+    viewModel: OnboardingViewModel = hiltViewModel(),
     onOnboardingComplete: () -> Unit
 ) {
     val uiState = viewModel.uiState
+    val pagerState = rememberPagerState(pageCount = { viewModel.totalPages })
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage) {
+        viewModel.onPageSwiped(pagerState.currentPage)
+    }
 
     LaunchedEffect(uiState.isCompleted) {
         if (uiState.isCompleted) {
@@ -37,7 +48,6 @@ fun OnboardingPage(
         }
     }
 
-    // Mengambil string dari strings.xml secara dinamis
     val titles = listOf(
         stringResource(R.string.onboarding_title_1),
         stringResource(R.string.onboarding_title_2),
@@ -56,18 +66,24 @@ fun OnboardingPage(
         Icons.Default.BarChart
     )
 
-    // Menggunakan variabel warna terpusat dari Color.kt Anda
     val iconBackgrounds = listOf(MitiSecondary, MitiAccent, MitiSecondary)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MitiNavy)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(modifier = Modifier.height(24.dp))
+
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.weight(1f).fillMaxWidth()
+        ) { pageIndex ->
+            val pageItem = viewModel.onboardPages[pageIndex]
+        }
 
         Column(
             modifier = Modifier.weight(1f).fillMaxWidth(),
@@ -121,7 +137,7 @@ fun OnboardingPage(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 for (i in 0 until viewModel.totalPages) {
-                    val isActive = i == uiState.currentPage
+                    val isActive = i == pagerState.currentPage
                     Box(
                         modifier = Modifier
                             .height(6.dp)

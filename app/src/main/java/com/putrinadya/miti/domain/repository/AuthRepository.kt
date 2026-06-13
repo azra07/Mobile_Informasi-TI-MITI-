@@ -15,7 +15,20 @@ interface AuthRepository {
         role: String,
         nim: String
     ): Flow<Result<Unit>>
+    fun registerStudent(
+        name: String,
+        email: String,
+        password: String,
+        nim: String
+    ): Flow<Result<Unit>>
+    suspend fun updateUserProfile(
+        name: String,
+        nim: String,
+        email: String
+    ): Result<Unit>
     fun getCurrentUser(): User?
     suspend fun getFullCurrentUser(): User?
+    fun getStudentCount(): Flow<Int>
+    fun sendPasswordResetEmail(email: String): Flow<Result<Unit>>
     fun logout()
 }

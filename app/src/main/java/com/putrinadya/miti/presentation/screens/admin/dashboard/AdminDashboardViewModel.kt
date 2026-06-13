@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.putrinadya.miti.domain.model.Event
+import com.putrinadya.miti.domain.repository.AspirationRepository
 import com.putrinadya.miti.domain.repository.EventRepository
 import com.putrinadya.miti.domain.repository.AuthRepository
 import com.putrinadya.miti.domain.usecase.admin.AddEventUseCase
+import com.putrinadya.miti.domain.usecase.admin.DeleteAllEventsUseCase
 import com.putrinadya.miti.domain.usecase.admin.DeleteEventUseCase
 import com.putrinadya.miti.domain.usecase.admin.UpdateEventUseCase
 import com.putrinadya.miti.domain.usecase.event.GetEventsUseCase
@@ -20,10 +22,12 @@ import javax.inject.Inject
 @HiltViewModel
 class AdminDashboardViewModel @Inject constructor(
     private val repository: EventRepository,
-    private val authRepository: AuthRepository, // Suntikan Dependensi AuthRepository untuk memuat profil admin
+    private val authRepository: AuthRepository,
+    private val aspirationRepository: AspirationRepository, // 1. TAMBAHKAN INI
     private val getEventsUseCase: GetEventsUseCase,
     private val addEventUseCase: AddEventUseCase,
     private val deleteEventUseCase: DeleteEventUseCase,
+    private val deleteAllEventsUseCase: DeleteAllEventsUseCase,
     private val updateEventUseCase: UpdateEventUseCase
 ) : ViewModel() {
 
@@ -36,6 +40,8 @@ class AdminDashboardViewModel @Inject constructor(
     init {
         observeEvents()
         loadAdminProfile() // Memuat profil admin saat pertama kali ViewModel dibuat
+        observeStudentCount()
+        observeAspirations()
     }
 
     private fun observeEvents() {
@@ -60,6 +66,27 @@ class AdminDashboardViewModel @Inject constructor(
         }
     }
 
+    private fun observeStudentCount() {
+        viewModelScope.launch {
+            authRepository.getStudentCount().collect { count ->
+                uiState = uiState.copy(totalStudents = count)
+            }
+        }
+    }
+
+    private fun observeAspirations() {
+        viewModelScope.launch {
+            aspirationRepository.getAspirationCount().collect { count ->
+                uiState = uiState.copy(newAspirations = count)
+            }
+        }
+        viewModelScope.launch {
+            aspirationRepository.getAllAspirations().collect { list ->
+                uiState = uiState.copy(aspirationsList = list)
+            }
+        }
+    }
+
     // Membaca profil admin asli dari Firestore Database secara dinamis
     private fun loadAdminProfile() {
         viewModelScope.launch {
@@ -73,6 +100,22 @@ class AdminDashboardViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun registerNewStudent(name: String, email: String, pass: String, nim: String) {
+        viewModelScope.launch {
+            uiState = uiState.copy(isRegistering = true)
+            authRepository.registerStudent(name, email, pass, nim).collect { result ->
+                uiState = uiState.copy(
+                    isRegistering = false,
+                    showRegisterUserDialog = !result.isSuccess // Tutup jika sukses
+                )
+            }
+        }
+    }
+
+    fun onShowRegisterDialog(show: Boolean) {
+        uiState = uiState.copy(showRegisterUserDialog = show)
     }
 
     fun createNewEvent(event: Event) {
@@ -133,6 +176,17 @@ class AdminDashboardViewModel @Inject constructor(
                     isLoading = false,
                     error = exception.message ?: "Gagal menghapus event"
                 )
+            }
+        }
+    }
+
+    fun clearAllEvents() {
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            deleteAllEventsUseCase().onSuccess {
+                uiState = uiState.copy(isLoading = false)
+            }.onFailure {
+                uiState = uiState.copy(isLoading = false, error = it.message)
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.putrinadya.miti.presentation.screens.auth.login
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -26,7 +27,6 @@ fun LoginPage(
 ) {
     val uiState = viewModel.uiState
 
-    // Efek Navigasi setelah login sukses
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             if (uiState.userRole == "admin") {
@@ -41,12 +41,11 @@ fun LoginPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MitiNavy)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        // Header (Logo & Title)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 40.dp)
@@ -54,10 +53,10 @@ fun LoginPage(
             Box(
                 modifier = Modifier
                     .size(80.dp)
-                    .background(MitiCyan, shape = RoundedCornerShape(16.dp)),
+                    .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(text = "✦", fontSize = 36.sp, color = MitiNavy)
+                Text(text = "✦", fontSize = 36.sp, color = MaterialTheme.colorScheme.background)
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
@@ -73,10 +72,9 @@ fun LoginPage(
             )
         }
 
-        // Card Login Form
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MitiCard),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
@@ -88,7 +86,6 @@ fun LoginPage(
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Error Message
                 uiState.error?.let {
                     Text(text = it, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
                 }
@@ -97,15 +94,15 @@ fun LoginPage(
                 OutlinedTextField(
                     value = uiState.emailOrNim,
                     onValueChange = { viewModel.onEmailOrNimChanged(it) },
-                    placeholder = { Text("Enter your email", color = MitiGray) },
+                    placeholder = { Text(stringResource(id = R.string.email_label), color = MitiGray) },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = MitiWhite,
                         unfocusedTextColor = MitiWhite,
-                        focusedContainerColor = MitiNavy,
-                        unfocusedContainerColor = MitiNavy,
-                        focusedBorderColor = MitiCyan,
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = Color.Transparent
                     )
                 )
@@ -116,19 +113,38 @@ fun LoginPage(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = { viewModel.onPasswordChanged(it) },
-                    placeholder = { Text("Enter your password", color = MitiGray) },
+                    placeholder = { Text(stringResource(id = R.string.enter_pass), color = MitiGray) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = MitiWhite,
                         unfocusedTextColor = MitiWhite,
-                        focusedContainerColor = MitiNavy,
-                        unfocusedContainerColor = MitiNavy,
-                        focusedBorderColor = MitiCyan,
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.background,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = Color.Transparent
                     )
                 )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.forgot),
+                        color = MitiGray,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .clickable {
+                                viewModel.sendForgotPassword(uiState.emailOrNim)
+                            }
+                            .padding(4.dp)
+                    )
+                }
             }
         }
 
@@ -140,10 +156,10 @@ fun LoginPage(
             Button(
                 onClick = { viewModel.login("mahasiswa") },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MitiCyan),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = stringResource(id = R.string.login_as_student), color = MitiNavy, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.login_as_student), color = MaterialTheme.colorScheme.background, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -152,17 +168,17 @@ fun LoginPage(
                 onClick = { viewModel.login("admin") },
                 modifier = Modifier.fillMaxWidth().height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MitiCyan),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.primary),
                 border = ButtonDefaults.outlinedButtonBorder.copy(
-                    brush = androidx.compose.ui.graphics.SolidColor(MitiCyan)
+                    brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
                 )
             ) {
-                Text(text = stringResource(id = R.string.login_as_admin), color = MitiCyan, fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.login_as_admin), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
             }
 
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Teknologi Informasi | University Lambung Mangkurat",
+                text = stringResource(id = R.string.footer),
                 fontSize = 11.sp,
                 color = MitiGray
             )

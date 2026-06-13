@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +26,7 @@ fun TopBar(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(Color(0xFF030A16))
+            .background(MaterialTheme.colorScheme.onBackground)
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.putrinadya.miti.domain.model.User
 import com.putrinadya.miti.domain.usecase.auth.CheckSessionUseCase
+import com.putrinadya.miti.domain.usecase.auth.ForgotPasswordUseCase
 import com.putrinadya.miti.domain.usecase.auth.LoginUseCase
 import com.putrinadya.miti.presentation.navigation.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val checkSessionUseCase: CheckSessionUseCase
+    private val checkSessionUseCase: CheckSessionUseCase,
+    private val forgotPasswordUseCase: ForgotPasswordUseCase
 ) : ViewModel() {
     var uiState by mutableStateOf(LoginUiState())
         private set
@@ -59,6 +61,28 @@ class LoginViewModel @Inject constructor(
                         isLoading = false,
                         error = exception.message ?: "Login gagal. Periksa kembali email atau password Anda."
                     )
+                }
+            }
+        }
+    }
+
+    fun sendForgotPassword(email: String) {
+        if (email.isBlank()) {
+            uiState = uiState.copy(error = "Masukkan email terlebih dahulu")
+            return
+        }
+
+        viewModelScope.launch {
+            uiState = uiState.copy(isLoading = true)
+            // Gunakan repository untuk mengirim email
+            forgotPasswordUseCase(email).collect { result ->
+                uiState = if (result.isSuccess) {
+                    uiState.copy(
+                        isLoading = false,
+                        error = "Link reset password telah dikirim ke email"
+                    )
+                } else {
+                    uiState.copy(isLoading = false, error = result.exceptionOrNull()?.message)
                 }
             }
         }

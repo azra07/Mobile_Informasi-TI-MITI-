@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,7 +24,7 @@ fun HistoryItem(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF091522)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -39,7 +40,7 @@ fun HistoryItem(
                         .background(Color(0xFF142233), RoundedCornerShape(8.dp)),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("✓", color = Color(0xFF00E676), fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                    Text("✓", color = MaterialTheme.colorScheme.onBackground, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -63,13 +64,13 @@ fun HistoryItem(
             // Status Badge "Done" di kanan
             Box(
                 modifier = Modifier
-                    .background(Color(0xFF00E676).copy(alpha = 0.15f), RoundedCornerShape(12.dp))
+                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.15f), RoundedCornerShape(12.dp))
                     .padding(horizontal = 10.dp, vertical = 4.dp)
             ) {
                 Text(
                     text = "Done",
                     fontSize = 10.sp,
-                    color = Color(0xFF00E676),
+                    color =MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold
                 )
             }

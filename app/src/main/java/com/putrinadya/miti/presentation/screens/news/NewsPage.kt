@@ -18,13 +18,14 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.putrinadya.miti.R
 import coil.compose.AsyncImage
-import com.putrinadya.miti.ui.theme.*
+import com.putrinadya.miti.ui.theme.MitiGray
+import com.putrinadya.miti.ui.theme.MitiWhite
 
 @Composable
 fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewModel()) {
     val state = viewModel.uiState
 
-    Column(modifier = Modifier.fillMaxSize().background(MitiNavy)) {
+    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Text(
             stringResource(id = R.string.news_title),
             fontSize = 24.sp,
@@ -35,7 +36,7 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
 
         if (state.isLoading) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MitiCyan)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
 
@@ -58,7 +59,7 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
                             .clickable {
                                 onNewsClick(news.url)
                             },
-                        colors = CardDefaults.cardColors(containerColor = MitiCard)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
                         Column {
                             AsyncImage(
@@ -68,7 +69,7 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
                                 contentScale = ContentScale.Crop
                             )
                             Column(Modifier.padding(12.dp)) {
-                                Text(news.source, color = MitiCyan, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                Text(news.source, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                                 Text(news.title, color = MitiWhite, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 2)
                                 Spacer(Modifier.height(4.dp))
                                 Text(news.description, color = MitiGray, fontSize = 13.sp, maxLines = 3)

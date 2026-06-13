@@ -1,53 +1,101 @@
 <resources>
     <string name="app_name">MITI</string>
+    <string name="app_tagline">IT Management Activity</string>
+    <string name="no_title">No Title</string>
+    <string name="general_category">General</string>
+    <string name="footer">Technology Information | University of Lambung Mangkurat</string>
 
-    <string name="onboarding_title_1">Centralized Information</string>
-    <string name="onboarding_desc_1">Find information on seminars, competitions, and IT Prodi activities without missing broadcasts.</string>
-    <string name="onboarding_title_2">Register Easily</string>
-    <string name="onboarding_desc_2">Join the activities you are interested in with just one click directly from the app.</string>
-    <string name="onboarding_title_3">Monitor Portfolio</string>
-    <string name="onboarding_desc_3">Your activity history will be recorded automatically in your profile as a digital portfolio.</string>
-    <string name="btn_next">Next</string>
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_calendar">Calendar</string>
+    <string name="nav_news">News</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Common Actions -->
+    <string name="btn_save">Save</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
+    <string name="btn_close">Close</string>
+    <string name="btn_back">Back</string>
+    <string name="label_see_all">See All</string>
+    <string name="label_view_all">View All</string>
+
+    <!-- Onboarding Screen -->
+    <string name="onboarding_title_1">Stay Updated</string>
+    <string name="onboarding_desc_1">Get real-time notifications about the latest IT events on campus.</string>
+    <string name="onboarding_title_2">Easy Registration</string>
+    <string name="onboarding_desc_2">Register for workshops and seminars with just one click.</string>
+    <string name="onboarding_title_3">Track Activities</string>
+    <string name="onboarding_desc_3">Monitor your activity history and certificates easily.</string>
     <string name="btn_skip">Skip</string>
+    <string name="btn_next">Next</string>
     <string name="btn_start">Get Started</string>
 
-    <string name="login_welcome">Welcome Back</string>
-    <string name="login_subtitle">Manage your university tech events</string>
-    <string name="dont_have_account">Don\'t have an account? Register</string>
-    <string name="role_student">Student College</string>
-    <string name="role_admin">Admin / Lecturer</string>
-    <string name="login_title">Login to Account</string>
+    <!-- Authentication -->
+    <string name="login_welcome">Welcome</string>
+    <string name="login_subtitle">Sign in to continue</string>
+    <string name="email_label">Email Address</string>
+    <string name="password_label">Password</string>
+    <string name="enter_pass">Enter your password</string>
+    <string name="nim_label">NIM (Student ID)</string>
     <string name="login_as_student">Login as Student</string>
     <string name="login_as_admin">Login as Admin</string>
     <string name="create_account">Create Account</string>
-    <string name="register_title">Register Account</string>
-    <string name="register_subtitle">Join the IT Activity Hub community</string>
+    <string name="register_title">Join MITI</string>
+    <string name="register_subtitle">Fill in your details to register</string>
     <string name="full_name">Full Name</string>
-    <string name="email_label">Email Address</string>
-    <string name="nim_label">NIM (Student ID)</string>
-    <string name="password_label">Password</string>
-    <string name="register_as">Register As</string>
+    <string name="register_as">Register as</string>
+    <string name="role_student">Student</string>
+    <string name="role_admin">Admin</string>
     <string name="btn_create_account">Create Account</string>
-    <string name="error_empty_fields">Please fill in all fields</string>
+    <string name="forgot">Forgot Password?</string>
 
-    <string name="no_title">No Title</string>
-    <string name="no_location">Location Not Determined</string>
-    <string name="general_category">General</string>
+    <!-- Kalender -->
+    <string name="day_sun">Sun</string>
+    <string name="day_mon">Mon</string>
+    <string name="day_tue">Tue</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thu">Thu</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
 
-    <string name="news_title">Global IT Insights</string>
+    <!-- Dashboard & Events -->
+    <string name="greeting">Hello,</string>
+    <string name="search_placeholder">Search activities...</string>
+    <string name="section_featured">Featured Events</string>
+    <string name="section_upcoming">Upcoming Activities</string>
+    <string name="event_joined">Registered ✓</string>
+    <string name="event_join_now">Join Activity</string>
+
+    <!-- Admin Specific -->
+    <string name="admin_mode">Admin Mode</string>
+    <string name="manage_events">Manage Events</string>
+    <string name="btn_add_event">Create New Event</string>
+    <string name="btn_edit_event">Edit Event</string>
+    <string name="delete_all_confirm">Delete All Events?</string>
+    <string name="delete_all_desc">This action cannot be undone. All data will be lost.</string>
+
+    <!-- Profile & Settings -->
+    <string name="profile_title">Profile</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="history">Activity History</string>
+    <string name="no_history">No past activities found</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="language">Language</string>
+    <string name="account_security">Account Security</string>
+    <string name="logout">Logout</string>
+    <string name="send_link">A password reset link has been sent to your email address</string>
+    <string name="failed_send_link">Failed to send email</string>
+    <string name="send_aspiration">Your feedback has been successfully submitted! Thank you</string>
+    <string name="failed_send_aspiration">Failed to send aspiration</string>
+
+    <!-- News -->
+    <string name="news_title">Global TI News</string>
     <string name="error_loading">Failed to load news</string>
 
-    <!-- Bottom Navigation -->
-    <string name="nav_home">Home</string>
-    <string name="nav_news">News</string>
-    <string name="nav_calendar">Calendar</string>
-    <string name="nav_profile">Profile</string>
-
-    <!-- Dashboard Content -->
-    <string name="greeting_evening">Good Evening,</string>
-    <string name="search_placeholder">Search events, workshops...</string>
-    <string name="section_featured">Featured Tech Events</string>
-    <string name="section_upcoming">Upcoming Activities</string>
-    <string name="label_see_all">See all</string>
-    <string name="label_view_all">View all</string>
+    <!-- Aspirations -->
+    <string name="aspiration_title">Send Aspiration</string>
+    <string name="aspiration_subtitle">Give us your suggestions or complaints</string>
+    <string name="aspiration_placeholder">Write your aspiration here...</string>
+    <string name="aspiration_anonymous">Send as Anonymous</string>
 </resources>

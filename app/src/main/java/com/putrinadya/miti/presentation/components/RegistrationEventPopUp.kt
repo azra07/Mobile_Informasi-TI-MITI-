@@ -37,14 +37,14 @@ fun RegistrationPopUp(
                 .fillMaxWidth()
                 .padding(24.dp)
                 .wrapContentHeight(),
-            colors = CardDefaults.cardColors(containerColor = MitiNavy), // Menggunakan MitiNavy
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(24.dp)
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(MitiSecondary) // Menggunakan MitiSecondary (Biru Pekat)
+                        .background(MaterialTheme.colorScheme.onBackground)
                         .padding(20.dp)
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -55,12 +55,12 @@ fun RegistrationPopUp(
                         ) {
                             Text(
                                 text = event.category,
-                                color = MitiWhite.copy(alpha = 0.8f), // Menggunakan MitiWhite
+                                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f), // Menggunakan MitiWhite
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier
                                     .background(
-                                        MitiWhite.copy(alpha = 0.2f),
+                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
                                         RoundedCornerShape(6.dp)
                                     )
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -69,7 +69,7 @@ fun RegistrationPopUp(
                                 modifier = Modifier
                                     .size(32.dp)
                                     .background(
-                                        MitiWhite.copy(alpha = 0.2f),
+                                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.2f),
                                         CircleShape
                                     )
                                     .clickable { onClose() },
@@ -78,7 +78,7 @@ fun RegistrationPopUp(
                                 Icon(
                                     Icons.Default.Close,
                                     contentDescription = "Close",
-                                    tint = MitiWhite, // Menggunakan MitiWhite
+                                    tint = MaterialTheme.colorScheme.onBackground,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -86,7 +86,7 @@ fun RegistrationPopUp(
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
                             text = event.title,
-                            color = MitiWhite, // Menggunakan MitiWhite
+                            color = MaterialTheme.colorScheme.onBackground,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -129,10 +129,10 @@ fun RegistrationPopUp(
                             .fillMaxWidth()
                             .border(
                                 1.dp,
-                                Color(0xFF003D4C),
+                                MaterialTheme.colorScheme.onBackground,
                                 RoundedCornerShape(12.dp)
                             )
-                            .background(Color(0xFF061825))
+                            .background(MaterialTheme.colorScheme.onBackground)
                             .padding(14.dp)
                     ) {
                         Row(
@@ -145,13 +145,13 @@ fun RegistrationPopUp(
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
                                     "Available Spots",
-                                    color = MitiWhite, // Menggunakan MitiWhite
+                                    color = MaterialTheme.colorScheme.onBackground, // Menggunakan MitiWhite
                                     fontSize = 14.sp
                                 )
                             }
                             Text(
                                 "8 / 50",
-                                color = MitiCyan, // Menggunakan MitiCyan
+                                color = MaterialTheme.colorScheme.onBackground,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp
                             )
@@ -160,13 +160,13 @@ fun RegistrationPopUp(
 
                     Text(
                         "Description",
-                        color = MitiWhite, // Menggunakan MitiWhite
+                        color = MaterialTheme.colorScheme.onBackground, // Menggunakan MitiWhite
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )
                     Text(
                         text = "Learn the fundamentals of user interface and experience design with hands-on projects.",
-                        color = MitiGray, // Menggunakan MitiGray
+                        color = MaterialTheme.colorScheme.onBackground,
                         fontSize = 13.sp,
                         lineHeight = 18.sp
                     )
@@ -179,13 +179,13 @@ fun RegistrationPopUp(
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isJoined) MitiHackathon else MitiWhite // Menggunakan warna MitiHackathon (Hijau) jika joined, sebaliknya MitiWhite
+                            containerColor = if (isJoined) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground
                         ),
                         shape = RoundedCornerShape(25.dp)
                     ) {
                         Text(
                             text = if (isJoined) "Joined / Registered ✓" else "Join Activity",
-                            color = if (isJoined) MitiWhite else MitiNavy, // Menggunakan warna tema kustom Anda
+                            color = if (isJoined) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground,
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
@@ -201,7 +201,7 @@ private fun RowInfoBox(title: String, value: String, icon: String, modifier: Mod
     Box(
         modifier = modifier
             .background(
-                MitiCard, // Menggunakan MitiCard
+                MaterialTheme.colorScheme.onBackground,
                 RoundedCornerShape(12.dp)
             )
             .padding(14.dp)
@@ -210,10 +210,10 @@ private fun RowInfoBox(title: String, value: String, icon: String, modifier: Mod
             Text(icon, fontSize = 16.sp)
             Spacer(modifier = Modifier.width(10.dp))
             Column {
-                Text(title, color = MitiGray, fontSize = 10.sp) // Menggunakan MitiGray
+                Text(title, color = MaterialTheme.colorScheme.onBackground, fontSize = 10.sp)
                 Text(
                     value,
-                    color = MitiWhite, // Menggunakan MitiWhite
+                    color = MaterialTheme.colorScheme.onBackground,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.Bold
                 )
