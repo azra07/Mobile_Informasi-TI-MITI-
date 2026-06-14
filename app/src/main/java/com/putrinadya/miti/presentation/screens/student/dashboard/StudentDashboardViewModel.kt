@@ -23,6 +23,8 @@ import android.content.Context
 import com.putrinadya.miti.R.string.failed_send_link
 import com.putrinadya.miti.domain.model.User
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.tasks.await
+import android.widget.Toast
 
 @HiltViewModel
 class StudentDashboardViewModel @Inject constructor(
@@ -62,6 +64,37 @@ class StudentDashboardViewModel @Inject constructor(
     init {
         loadEventsFromRepository()
         loadStudentProfile()
+        loadRegisteredEvents()
+    }
+
+    private fun loadRegisteredEvents() {
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getFullCurrentUser()?.uid ?: return@launch
+
+                // Mendengarkan sub-koleksi 'registered_events' milik user yang sedang login
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .collection("registered_events")
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            error.printStackTrace()
+                            return@addSnapshotListener
+                        }
+
+                        if (snapshot != null) {
+                            val list = snapshot.documents.mapNotNull { doc ->
+                                doc.toObject(Event::class.java)
+                            }
+                            registeredEvents.clear()
+                            registeredEvents.addAll(list) // Update list lokal secara otomatis
+                        }
+                    }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun loadEventsFromRepository() {
@@ -152,11 +185,64 @@ class StudentDashboardViewModel @Inject constructor(
     }
 
     fun registerForEvent(event: Event) {
-        registerToEventUseCase.execute(event, registeredEvents)
+        // Validasi kuota penuh
+        if (event.currentParticipants >= event.maxParticipants) {
+            android.widget.Toast.makeText(context, "Maaf, kuota kegiatan ini sudah penuh!", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getFullCurrentUser()?.uid ?: return@launch
+
+                // A. Simpan data event ke sub-koleksi milik user di Firestore agar tersimpan permanen
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .collection("registered_events")
+                    .document(event.id)
+                    .set(event)
+                    .await()
+
+                // B. Tambahkan (+1) kuota peserta di koleksi utama 'events'
+                val updatedParticipants = event.currentParticipants + 1
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("events")
+                    .document(event.id)
+                    .update("currentParticipants", updatedParticipants)
+                    .await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
+
     fun unregisterForEvent(event: Event) {
-        registeredEvents.removeIf { it.title == event.title }
+        viewModelScope.launch {
+            try {
+                val uid = authRepository.getFullCurrentUser()?.uid ?: return@launch
+
+                // A. Hapus data event dari sub-koleksi milik user di Firestore secara permanen
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .collection("registered_events")
+                    .document(event.id)
+                    .delete()
+                    .await()
+
+                // B. Kurangi (-1) kuota peserta di koleksi utama 'events'
+                val updatedParticipants = (event.currentParticipants - 1).coerceAtLeast(0)
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("events")
+                    .document(event.id)
+                    .update("currentParticipants", updatedParticipants)
+                    .await()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun logout() {

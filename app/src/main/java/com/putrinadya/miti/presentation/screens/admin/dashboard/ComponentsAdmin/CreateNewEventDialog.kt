@@ -1,4 +1,4 @@
-package com.putrinadya.miti.presentation.screens.admin.dashboard
+package com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.background
@@ -25,23 +25,21 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.ui.theme.*
 import java.util.Calendar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditEventDialog(
-    event: Event,
+fun CreateNewEventDialog(
     onClose: () -> Unit,
     onSave: (Event) -> Unit
 ) {
-    var eventTitle by remember { mutableStateOf(event.title) }
-    var description by remember { mutableStateOf(event.description) }
-    var dateString by remember { mutableStateOf(event.fullDate) }
-    var timeString by remember { mutableStateOf(event.time) }
-    var location by remember { mutableStateOf(event.location) }
-    var eventType by remember { mutableStateOf(event.category) }
-    var capacity by remember { mutableStateOf(event.maxParticipants.toString()) }
+    var eventTitle by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var dateString by remember { mutableStateOf("") }
+    var timeString by remember { mutableStateOf("") }
+    var location by remember { mutableStateOf("") }
+    var eventType by remember { mutableStateOf("Workshop") }
+    var capacity by remember { mutableStateOf("50") }
 
     var dropdownExpanded by remember { mutableStateOf(false) } // State kontrol dropdown jenis event
     val eventTypesList = listOf("Workshop", "Hackathon", "Seminar", "Webinar", "Competition", "Fun Match")
@@ -55,6 +53,7 @@ fun EditEventDialog(
         DatePickerDialog(
             context,
             { _, year, month, dayOfMonth ->
+                // Menyimpan tanggal terpilih dengan format M/d/yyyy (contoh: 7/13/2026)
                 dateString = "${month + 1}/$dayOfMonth/$year"
             },
             calendar.get(Calendar.YEAR),
@@ -88,7 +87,7 @@ fun EditEventDialog(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Edit Kegiatan", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                    Text("Buat Kegiatan Baru", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
                     Box(
                         modifier = Modifier
                             .size(32.dp)
@@ -106,7 +105,7 @@ fun EditEventDialog(
                     OutlinedTextField(
                         value = eventTitle,
                         onValueChange = { eventTitle = it },
-                        placeholder = { Text("Contoh: Workshop Desain UI/UX", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                        placeholder = { Text("Nama Kegiatan", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -189,7 +188,7 @@ fun EditEventDialog(
                         OutlinedTextField(
                             value = timeString,
                             onValueChange = { timeString = it },
-                            placeholder = { Text("Contoh: 11:00 WITA", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                            placeholder = { Text("00:00 WITA", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = OutlinedTextFieldDefaults.colors(
@@ -210,7 +209,7 @@ fun EditEventDialog(
                     OutlinedTextField(
                         value = location,
                         onValueChange = { location = it },
-                        placeholder = { Text("Contoh: Aula TI, Gedung B", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                        placeholder = { Text("Ruang A-14 FT ULM BJM", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         leadingIcon = { Icon(Icons.Default.LocationOn, contentDescription = "Lokasi", tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         shape = RoundedCornerShape(12.dp),
@@ -265,11 +264,11 @@ fun EditEventDialog(
                             DropdownMenu(
                                 expanded = dropdownExpanded,
                                 onDismissRequest = { dropdownExpanded = false },
-                                modifier = Modifier.fillMaxWidth(0.5f).background(MaterialTheme.colorScheme.surface) // Perbaiki warna latar belakang dropdown
+                                modifier = Modifier.fillMaxWidth(0.5f).background(MaterialTheme.colorScheme.surface)
                             ) {
                                 eventTypesList.forEach { type ->
                                     DropdownMenuItem(
-                                        text = { Text(type, color = MaterialTheme.colorScheme.onSurface) }, // Teks dinamis kontras
+                                        text = { Text(type, color = MaterialTheme.colorScheme.onSurface) },
                                         onClick = {
                                             eventType = type
                                             dropdownExpanded = false
@@ -302,7 +301,7 @@ fun EditEventDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // Tombol Simpan Perubahan (PERBAIKAN WARNA KONTRAST UTAMA)
+                // Tombol Buat Kegiatan (PERBAIKAN WARNA KONTRAST UTAMA)
                 Button(
                     onClick = {
                         val dateParts = dateString.split("/")
@@ -327,7 +326,7 @@ fun EditEventDialog(
                             else -> "#9E9E9E"             // MitiGray
                         }
 
-                        val updatedEvent = event.copy(
+                        val newEvent = Event(
                             title = eventTitle,
                             category = eventType,
                             dayMonth = parsedMonth,
@@ -335,19 +334,18 @@ fun EditEventDialog(
                             fullDate = dateString,
                             time = timeString,
                             location = location,
+                            currentParticipants = 0,
                             maxParticipants = capacity.toIntOrNull() ?: 50,
                             description = description,
                             categoryColorHex = colorHex
                         )
-                        onSave(updatedEvent)
+                        onSave(newEvent)
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp),
+                    modifier = Modifier.fillMaxWidth().height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary), // Latar belakang Cyan
                     shape = RoundedCornerShape(25.dp)
                 ) {
-                    Text("Simpan Perubahan", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold) // Teks Hitam Kontras
+                    Text("Buat Kegiatan", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold) // Teks Hitam Kontras
                 }
             }
         }

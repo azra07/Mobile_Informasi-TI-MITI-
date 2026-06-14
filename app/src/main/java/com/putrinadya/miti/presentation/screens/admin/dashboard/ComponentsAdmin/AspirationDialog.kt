@@ -1,4 +1,4 @@
-package com.putrinadya.miti.presentation.screens.admin.dashboard
+package com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +35,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.putrinadya.miti.ui.theme.*
 
 @Composable
 fun AspirationDialog(

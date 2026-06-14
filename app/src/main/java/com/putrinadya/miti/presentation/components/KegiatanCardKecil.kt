@@ -9,6 +9,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +26,18 @@ fun UpcomingActivityCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val categoryColor = try {
-        Color(android.graphics.Color.parseColor(event.categoryColorHex))
-    } catch (e: Exception) {
-        MaterialTheme.colorScheme.onBackground
+    // KONVERSI: Mengubah String Hex warna dari model menjadi Color Jetpack Compose
+    val categoryColor = remember(event.categoryColorHex) {
+        try {
+            Color(android.graphics.Color.parseColor(event.categoryColorHex))
+        } catch (e: Exception) {
+            MitiGray
+        }
+    }
+
+    // Memformat jam agar selalu diakhiri dengan WITA secara rapi
+    val formattedTime = remember(event.time) {
+        if (event.time.contains("WITA", ignoreCase = true)) event.time else "${event.time} WITA"
     }
 
     Card(
@@ -36,7 +45,7 @@ fun UpcomingActivityCard(
             .fillMaxWidth()
             .clickable { onClick() }
             .padding(vertical = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Menggunakan MitiCard
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Latar belakang abu terang di Light Mode
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
@@ -45,22 +54,29 @@ fun UpcomingActivityCard(
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // PERBAIKAN: Kotak penampung tanggal (Tanggal ATAS menonjol, Tahun BAWAH mengecil)
             Box(
                 modifier = Modifier
                     .size(52.dp)
                     .background(
-                       MaterialTheme.colorScheme.onBackground,
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), // Cyan transparan lembut
                         RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(event.dayMonth, fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
+                    // Teks Atas (Tanggal & Bulan) dibuat besar dan tebal (menonjol)
                     Text(
-                        event.year,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onBackground // Menggunakan MitiWhite
+                        text = event.dayMonth,
+                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.primary, // Berwarna Cyan murni
+                        fontWeight = FontWeight.Bold
+                    )
+                    // Teks Bawah (Tahun) dibuat kecil dan abu-abu lembut
+                    Text(
+                        text = event.year,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f) // Berwarna abu/hitam pudar di Light Mode
                     )
                 }
             }
@@ -69,29 +85,34 @@ fun UpcomingActivityCard(
 
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    event.title,
+                    text = event.title,
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = MaterialTheme.colorScheme.onSurface // Teks warna Hitam di Light Mode
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(event.time, fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
-                    Text(" • ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onBackground)
                     Text(
-                        event.location,
+                        text = formattedTime, // Waktu otomatis berakhiran WITA
                         fontSize = 11.sp,
-                        color = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+                    Text(" • ", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f))
+                    Text(
+                        text = event.location,
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             }
 
+            // Kategori Badge di ujung kanan
             Box(
                 modifier = Modifier
                     .background(
-                        categoryColor.copy(alpha = 0.2f), // Menggunakan categoryColor hasil konversi
+                        categoryColor.copy(alpha = 0.2f),
                         RoundedCornerShape(8.dp)
                     )
                     .padding(horizontal = 8.dp, vertical = 4.dp)
@@ -99,7 +120,7 @@ fun UpcomingActivityCard(
                 Text(
                     text = event.category,
                     fontSize = 11.sp,
-                    color = categoryColor, // Menggunakan categoryColor hasil konversi
+                    color = categoryColor,
                     fontWeight = FontWeight.Bold
                 )
             }

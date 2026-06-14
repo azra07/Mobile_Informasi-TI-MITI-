@@ -16,13 +16,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource // Import untuk memanggil drawable resource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.putrinadya.miti.R
 import com.putrinadya.miti.presentation.screens.profile.ProfileAdmin
 import androidx.navigation.NavController
+import com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin.AdminEventCard
+import com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin.CreateNewEventDialog
+import com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin.EditEventDialog
+import com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin.RegisterStudentDialog
+import com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin.StatCard
 
 @Composable
 fun AdminDashboardPage(
@@ -71,8 +75,9 @@ fun AdminDashboardPage(
                                 painter = painterResource(id = R.drawable.logo),
                                 contentDescription = "Logo MITI",
                                 modifier = Modifier
-                                    .height(35.dp)
-                                    .padding(bottom = 4.dp)
+                                    .size(70.dp)
+                                    .height(20.dp)
+                                    .padding(bottom = 3.dp)
                             )
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -128,8 +133,18 @@ fun AdminDashboardPage(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        StatCard(title = "Total Kegiatan", value = uiState.totalEvents.toString(), iconText = "📅", modifier = Modifier.weight(1f))
-                        StatCard(title = "Aspirasi", value = uiState.newAspirations.toString(), iconText = "💡", modifier = Modifier.weight(1f))
+                        StatCard(
+                            title = "Total Kegiatan",
+                            value = uiState.totalEvents.toString(),
+                            iconText = "📅",
+                            modifier = Modifier.weight(1f)
+                        )
+                        StatCard(
+                            title = "Aspirasi",
+                            value = uiState.newAspirations.toString(),
+                            iconText = "💡",
+                            modifier = Modifier.weight(1f)
+                        )
                         StatCard(
                             title = "Total Mahasiswa",
                             value = uiState.totalStudents.toString(),

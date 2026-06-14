@@ -1,17 +1,18 @@
 package com.putrinadya.miti.presentation.screens.auth.login
 
+import androidx.compose.foundation.Image // Import untuk memuat gambar logo
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState // IMPORT UNTUK SCROLLING
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll // IMPORT UNTUK SCROLLING
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.painterResource // Import untuk memanggil logo drawable
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -41,7 +42,7 @@ fun LoginPage(
         }
     }
 
-    // Penerjemah Peringatan Firebase Inggris ke Bahasa Indonesia
+    // Penerjemah Peringatan Firebase Inggris ke Bahasa Indonesia secara Akurat
     val translatedError = remember(uiState.error) {
         when {
             uiState.error == null -> null
@@ -49,8 +50,12 @@ fun LoginPage(
                 "Format alamat email salah atau tidak valid."
             uiState.error!!.contains("user-not-found", ignoreCase = true) || uiState.error!!.contains("no user record", ignoreCase = true) ->
                 "Akun tidak ditemukan. Silakan hubungi admin kampus Anda."
-            uiState.error!!.contains("wrong-password", ignoreCase = true) || uiState.error!!.contains("invalid-credential", ignoreCase = true) ->
-                "Kata sandi salah. Silakan coba lagi."
+            uiState.error!!.contains("wrong-password", ignoreCase = true) ||
+                    uiState.error!!.contains("invalid-credential", ignoreCase = true) ||
+                    uiState.error!!.contains("incorrect", ignoreCase = true) ||
+                    uiState.error!!.contains("credential", ignoreCase = true) ||
+                    uiState.error!!.contains("expired", ignoreCase = true) ->
+                "Alamat email atau kata sandi salah. Silakan periksa kembali."
             uiState.error!!.contains("network", ignoreCase = true) ->
                 "Koneksi internet bermasalah. Periksa koneksi Anda."
             else -> uiState.error
@@ -60,68 +65,66 @@ fun LoginPage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background) // MitiNavy di Dark Mode, Putih di Light Mode
-            .verticalScroll(scrollState) // 1. Tambahkan fungsi scroll agar bisa di-scroll saat rotasi landscape
+            .background(MaterialTheme.colorScheme.background)
+            .verticalScroll(scrollState) // Mengaktifkan fungsi scroll saat posisi HP landscape
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
+        // Header (MEMPERBESAR LOGO ASLI ANDA & MENGHAPUS BOX BINTANG)
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(top = 40.dp)
         ) {
-            Box(
+            // 1. Memanggil Gambar logo.jpeg asli Anda dengan ukuran lebih besar (90.dp)
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo MITI",
                 modifier = Modifier
-                    .size(80.dp)
-                    .background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(16.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "✦", fontSize = 36.sp, color = MaterialTheme.colorScheme.onPrimary)
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = stringResource(id = R.string.app_name),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground // Dinamis berwarna Hitam di Light Mode
+                    .size(120.dp)
+                    .padding(bottom = 12.dp)
             )
+
             Text(
-                text = stringResource(id = R.string.login_subtitle),
+                text = "Masuk untuk melanjutkan", // Bahasa Indonesia murni
                 fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f) // Dinamis
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Card Login Form
         Card(
             modifier = Modifier.fillMaxWidth(),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // MitiCard di Dark, Abu Terang di Light
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             shape = RoundedCornerShape(16.dp)
         ) {
             Column(modifier = Modifier.padding(20.dp)) {
                 Text(
-                    text = stringResource(id = R.string.login_welcome),
+                    text = "Selamat Datang", // Bahasa Indonesia murni
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface, // Dinamis berwarna Hitam di Light Mode
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
-                // Peringatan otomatis dalam Bahasa Indonesia
+                // Error Message Terjemahan Indonesia
                 translatedError?.let {
                     Text(text = it, color = Color.Red, fontSize = 12.sp, modifier = Modifier.padding(bottom = 8.dp))
                 }
 
-                Text(text = stringResource(id = R.string.email_label), color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) // Dinamis
+                Text(text = "Alamat Email", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) // Bahasa Indonesia
                 OutlinedTextField(
                     value = uiState.emailOrNim,
                     onValueChange = { viewModel.onEmailOrNimChanged(it) },
-                    placeholder = { Text(stringResource(id = R.string.email_label), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                    placeholder = { Text("Masukkan alamat email Anda", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface, // Dinamis
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface, // Dinamis
-                        focusedContainerColor = MaterialTheme.colorScheme.background, // Putih bersih di Light Mode
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = Color.Transparent
@@ -130,46 +133,43 @@ fun LoginPage(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(text = stringResource(id = R.string.password_label), color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) // Dinamis
+                Text(text = "Kata Sandi", color = MaterialTheme.colorScheme.onSurface, fontSize = 12.sp) // Bahasa Indonesia
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = { viewModel.onPasswordChanged(it) },
-                    placeholder = { Text(stringResource(id = R.string.enter_pass), color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
+                    placeholder = { Text("Masukkan kata sandi Anda", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)) },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     shape = RoundedCornerShape(12.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = MaterialTheme.colorScheme.onSurface, // Dinamis
-                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface, // Dinamis
-                        focusedContainerColor = MaterialTheme.colorScheme.background, // Putih bersih di Light Mode
+                        focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                        focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = Color.Transparent
                     )
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.forgot),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), // Dinamis
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .clickable {
-                                viewModel.sendForgotPassword(uiState.emailOrNim)
-                            }
-                            .padding(4.dp)
-                    )
-                }
+                // Lupa Kata Sandi (Bahasa Indonesia murni)
+                Text(
+                    text = "Lupa Kata Sandi?",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clickable { viewModel.sendForgotPassword(uiState.emailOrNim) }
+                        .padding(4.dp)
+                )
             }
         }
 
-        // Buttons
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Buttons (PERMANEN BAHASA INDONESIA TANPA PENGARUH BAHASA EMULATOR)
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -180,7 +180,7 @@ fun LoginPage(
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Text(text = stringResource(id = R.string.login_as_student), color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold) // Dinamis
+                Text(text = "Masuk sebagai Mahasiswa", color = MaterialTheme.colorScheme.onPrimary, fontWeight = FontWeight.Bold) // Bahasa Indonesia Permanen
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -194,14 +194,14 @@ fun LoginPage(
                     brush = androidx.compose.ui.graphics.SolidColor(MaterialTheme.colorScheme.primary)
                 )
             ) {
-                Text(text = stringResource(id = R.string.login_as_admin), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+                Text(text = "Masuk sebagai Admin", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold) // Bahasa Indonesia Permanen
             }
 
             Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = stringResource(id = R.string.footer),
+                text = "Teknologi Informasi | Universitas Lambung Mangkurat", // Bahasa Indonesia murni
                 fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f) // Dinamis
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
             )
         }
     }

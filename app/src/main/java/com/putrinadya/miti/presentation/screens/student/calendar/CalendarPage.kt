@@ -55,11 +55,12 @@ fun CalendarPage(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
+            // PERBAIKAN: Judul halaman otomatis hitam di Light Mode
             Text(
                 text = stringResource(id = R.string.nav_calendar),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = MitiWhite,
+                color = MaterialTheme.colorScheme.onBackground, // Dinamis
                 modifier = Modifier.padding(bottom = 24.dp)
             )
         }
@@ -71,17 +72,26 @@ fun CalendarPage(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { calendarViewModel.previousMonth() }) {
-                    Icon(Icons.Default.KeyboardArrowLeft, contentDescription = null, tint = MitiWhite)
+                    Icon(
+                        Icons.Default.KeyboardArrowLeft,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground // Dinamis
+                    )
                 }
 
+                // PERBAIKAN: Sapaan nama bulan otomatis hitam di Light Mode
                 Text(
                     text = uiState.currentMonthName,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MitiWhite
+                    color = MaterialTheme.colorScheme.onBackground // Dinamis
                 )
                 IconButton(onClick = { calendarViewModel.nextMonth() }) {
-                    Icon(Icons.Default.KeyboardArrowRight, contentDescription = null, tint = MitiWhite)
+                    Icon(
+                        Icons.Default.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onBackground // Dinamis
+                    )
                 }
             }
         }
@@ -90,7 +100,7 @@ fun CalendarPage(
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Latar belakang abu terang di Light Mode
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
@@ -102,7 +112,7 @@ fun CalendarPage(
                                 text = day,
                                 modifier = Modifier.weight(1f),
                                 textAlign = TextAlign.Center,
-                                color = MitiGray,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), // Dinamis abu kontras
                                 fontSize = 12.sp
                             )
                         }
@@ -154,14 +164,14 @@ fun CalendarPage(
             }
         }
 
-        // 4. HEADER TANGGAL TERPILIH (Contoh: Tuesday, April 28)
+        // 4. HEADER TANGGAL TERPILIH
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Events for Selected Date",
+                text = "List Kegiatan", // Bahasa Indonesia murni
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
-                color = MitiWhite
+                color = MaterialTheme.colorScheme.onBackground // Dinamis
             )
         }
 
@@ -177,7 +187,7 @@ fun CalendarPage(
         if (selectedEvents.isEmpty()) {
             item {
                 Box(modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp), contentAlignment = Alignment.Center) {
-                    Text("No activities scheduled for this date.", color = MitiGray, fontSize = 14.sp)
+                    Text("Tidak ada kegiatan di tanggal ini.", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), fontSize = 14.sp)
                 }
             }
         } else {
@@ -216,7 +226,8 @@ fun CalendarDayItem(
         ) {
             Text(
                 text = day.toString(),
-                color = if (isSelected) MaterialTheme.colorScheme.background else MitiWhite,
+                // PERBAIKAN: Jika dipilih, teks berwarna hitam kontras di atas Cyan. Jika biasa, berwarna dinamis onSurface
+                color = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                 fontSize = 14.sp
             )
@@ -227,7 +238,6 @@ fun CalendarDayItem(
             modifier = Modifier.padding(top = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            // Menampilkan maksimal 3 titik agar rapi
             events.take(3).forEach { event ->
                 val dotColor = try {
                     Color(android.graphics.Color.parseColor(event.categoryColorHex))
@@ -269,10 +279,10 @@ fun SelectedEventItem(event: Event) {
                 // Indikator Titik
                 Box(modifier = Modifier.size(8.dp).background(categoryColor, CircleShape))
                 Spacer(modifier = Modifier.width(12.dp))
-                // Judul Event
+                // Judul Event (PERBAIKAN: Berwarna hitam kontras di Light Mode)
                 Text(
                     text = event.title,
-                    color = MitiWhite,
+                    color = MaterialTheme.colorScheme.onSurface, // Dinamis
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
@@ -281,12 +291,13 @@ fun SelectedEventItem(event: Event) {
             // Waktu Event
             Box(
                 modifier = Modifier
-                    .background(MitiWhite.copy(alpha = 0.1f), RoundedCornerShape(6.dp))
+                    // PERBAIKAN: Latar belakang wadah jam abu transparan dinamis penjamin kontras di Light Mode
+                    .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f), RoundedCornerShape(6.dp))
                     .padding(horizontal = 8.dp, vertical = 4.dp)
             ) {
                 Text(
                     text = event.time,
-                    color = MitiGray,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f), // Dinamis abu kontras
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold
                 )

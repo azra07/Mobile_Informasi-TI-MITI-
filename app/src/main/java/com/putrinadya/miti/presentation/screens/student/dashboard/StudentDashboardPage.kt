@@ -1,16 +1,8 @@
 package com.putrinadya.miti.presentation.screens.student.dashboard
 
+import androidx.compose.foundation.Image // Import untuk memuat gambar logo
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -22,26 +14,20 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Newspaper
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource // Import untuk memanggil logo drawable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.putrinadya.miti.R
 import com.putrinadya.miti.domain.model.Event
@@ -58,11 +44,13 @@ import com.putrinadya.miti.ui.theme.*
 fun StudentDashboardPage(viewModel: StudentDashboardViewModel, navController: NavController) {
     val allEvents by viewModel.allEvents.collectAsState()
     val colorScheme = MaterialTheme.colorScheme
+
     Scaffold(
         bottomBar = {
+            // PERBAIKAN WARNA BOTTOM BAR: Menggunakan 'surface' agar otomatis berwarna abu-abu lembut di Light Mode (Sangat Seimbang!)
             NavigationBar(
-                containerColor = Color(0xFF040F1F),
-                tonalElevation = (8.dp)
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 8.dp
             ) {
                 val navItems = listOf(
                     Triple(0, Icons.Default.Home, R.string.nav_home),
@@ -78,11 +66,11 @@ fun StudentDashboardPage(viewModel: StudentDashboardViewModel, navController: Na
                         icon = { Icon(icon, contentDescription = null) },
                         label = { Text(stringResource(labelRes)) },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = MaterialTheme.colorScheme.background,
+                            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
                             selectedTextColor = MaterialTheme.colorScheme.primary,
                             indicatorColor = MaterialTheme.colorScheme.primary,
-                            unselectedIconColor = MitiGray,
-                            unselectedTextColor = MitiGray
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                         )
                     )
                 }
@@ -103,7 +91,10 @@ fun StudentDashboardPage(viewModel: StudentDashboardViewModel, navController: Na
                         navController.navigate("news_detail/$encodedUrl")
                     }
                 )
-                3 -> ProfileStudent(viewModel = hiltViewModel(), navController = navController)
+                3 -> ProfileStudent(
+                    viewModel = viewModel,
+                    navController = navController
+                )
             }
 
             viewModel.selectedEventForRegistration?.let { event ->
@@ -139,6 +130,7 @@ fun HomeContent(
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        // Header (LOGO REPLACEMENT, SEBARIS GRETTING & INISIAL DINAMIS 1 HURUF)
         item {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -146,32 +138,46 @@ fun HomeContent(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = colorScheme.primary
+                    // 1. Memanggil Gambar logo.jpeg asli Anda menggantikan teks MITI
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "Logo MITI",
+                        modifier = Modifier
+                            .size(70.dp)
+                            .height(20.dp)
+                            .padding(bottom = 3.dp)
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        stringResource(R.string.greeting),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        "${viewModel.studentProfile?.name ?: "Mahasiswa"}!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.Bold,
-                        color = colorScheme.onBackground
-                    )
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    // 2. Halo dan Nama Mahasiswa diletakkan sejajar sebaris (Bahasa Indonesia)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Halo, ",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = colorScheme.onBackground.copy(alpha = 0.6f)
+                        )
+                        Text(
+                            text = "${viewModel.studentProfile?.name ?: "Mahasiswa"}!",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = colorScheme.onBackground
+                        )
+                    }
                 }
+
+                // 3. Avatar Bulat Dinamis (Menampilkan otomatis 1 huruf pertama nama depan mahasiswa asli di database)
                 Box(
                     modifier = Modifier.size(45.dp)
                         .background(colorScheme.primaryContainer, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
+                    val name = viewModel.studentProfile?.name ?: "M"
+                    // Mengambil otomatis 1 huruf pertama (e.g. "Putri Fatima" -> "P")
+                    val singleInitial = if (name.isNotEmpty()) name.take(1).uppercase() else "M"
+
                     Text(
-                        "AJ",
+                        text = singleInitial,
                         fontWeight = FontWeight.Bold,
                         color = colorScheme.onPrimaryContainer
                     )
@@ -179,29 +185,30 @@ fun HomeContent(
             }
         }
 
+        // Search Bar (PERBAIKAN WARNA KONTRAST DI LIGHT MODE)
         item {
             OutlinedTextField(
                 value = viewModel.searchQuery,
                 onValueChange = { viewModel.onSearchQueryChanged(it) },
-                placeholder = { Text(stringResource(R.string.search_placeholder)) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                placeholder = { Text("Cari kegiatan, workshop...", color = colorScheme.onSurface.copy(alpha = 0.5f)) }, // Bahasa Indonesia
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = colorScheme.onSurface.copy(alpha = 0.6f)) },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = colorScheme.surfaceVariant,
-                    unfocusedContainerColor = colorScheme.surfaceVariant,
+                    focusedTextColor = colorScheme.onSurface,
+                    unfocusedTextColor = colorScheme.onSurface,
+                    focusedContainerColor = colorScheme.surface, // Menggunakan surface kontras tinggi
+                    unfocusedContainerColor = colorScheme.surface,
                     focusedBorderColor = colorScheme.primary,
                     unfocusedBorderColor = Color.Transparent
                 )
             )
         }
 
+        // Kategori Kegiatan Unggulan (HAPUS TOMBOL "SEE ALL" & FULL BAHASA INDONESIA)
         item {
             Column {
-                SectionHeader(
-                    title = stringResource(R.string.section_featured),
-                    actionText = stringResource(R.string.label_see_all)
-                )
+                SectionHeader(title = "Kegiatan Unggulan") // Bahasa Indonesia murni, see all dihapus
                 Spacer(modifier = Modifier.height(12.dp))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(allEvents.take(3)) { event ->
@@ -214,11 +221,9 @@ fun HomeContent(
             }
         }
 
+        // Kategori Kegiatan Mendatang (HAPUS TOMBOL "VIEW ALL" & FULL BAHASA INDONESIA)
         item {
-            SectionHeader(
-                title = stringResource(R.string.section_upcoming),
-                actionText = stringResource(R.string.label_view_all)
-            )
+            SectionHeader(title = "Kegiatan Mendatang") // Bahasa Indonesia murni, view all dihapus
         }
 
         items(viewModel.filteredEvents) { event ->
@@ -230,11 +235,11 @@ fun HomeContent(
     }
 }
 
+// ================= COMPONENT PEMBANTU: SECTION HEADER (SEE ALL & VIEW ALL DIHAPUS) =================
 @Composable
-fun SectionHeader(title: String, actionText: String) {
+fun SectionHeader(title: String) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -242,11 +247,6 @@ fun SectionHeader(title: String, actionText: String) {
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = actionText,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary
         )
     }
 }

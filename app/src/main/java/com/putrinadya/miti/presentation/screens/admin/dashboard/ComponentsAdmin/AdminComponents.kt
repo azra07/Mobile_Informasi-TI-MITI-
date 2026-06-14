@@ -1,4 +1,4 @@
-package com.putrinadya.miti.presentation.screens.admin.dashboard
+package com.putrinadya.miti.presentation.screens.admin.dashboard.ComponentsAdmin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.putrinadya.miti.domain.model.Event
-import com.putrinadya.miti.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.Locale
 

@@ -26,11 +26,12 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
     val state = viewModel.uiState
 
     Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        // PERBAIKAN: Judul halaman otomatis hitam di Light Mode
         Text(
-            stringResource(id = R.string.news_title),
+            text = stringResource(id = R.string.news_title),
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = MitiWhite,
+            color = MaterialTheme.colorScheme.onBackground, // Dinamis
             modifier = Modifier.padding(16.dp)
         )
 
@@ -59,7 +60,7 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
                             .clickable {
                                 onNewsClick(news.url)
                             },
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface) // Latar belakang abu terang di Light Mode
                     ) {
                         Column {
                             AsyncImage(
@@ -69,10 +70,30 @@ fun NewsPage(onNewsClick: (String) -> Unit, viewModel: NewsViewModel = hiltViewM
                                 contentScale = ContentScale.Crop
                             )
                             Column(Modifier.padding(12.dp)) {
-                                Text(news.source, color = MaterialTheme.colorScheme.primary, fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                                Text(news.title, color = MitiWhite, fontSize = 16.sp, fontWeight = FontWeight.Bold, maxLines = 2)
+                                // Sumber Berita: Menggunakan primary (Teal/Cyan)
+                                Text(
+                                    text = news.source,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                                 Spacer(Modifier.height(4.dp))
-                                Text(news.description, color = MitiGray, fontSize = 13.sp, maxLines = 3)
+                                // PERBAIKAN: Judul artikel berita otomatis hitam di Light Mode
+                                Text(
+                                    text = news.title,
+                                    color = MaterialTheme.colorScheme.onSurface, // Dinamis
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 2
+                                )
+                                Spacer(Modifier.height(6.dp))
+                                // PERBAIKAN: Deskripsi artikel berita otomatis abu gelap dinamis (kontras tinggi)
+                                Text(
+                                    text = news.description,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), // Dinamis kontras
+                                    fontSize = 13.sp,
+                                    maxLines = 3
+                                )
                             }
                         }
                     }
